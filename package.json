@@ -1,0 +1,9 @@
+{
+  "name": "road-to-agent-90",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "hub:build": "node scripts/build-learning-hub.mjs",
+    "hub:check": "node scripts/check-learning-hub.mjs"
+  }
+}

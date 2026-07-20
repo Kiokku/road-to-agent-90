@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A repository-backed learning hub for becoming a frontend Agent engineer in 12 weeks.">
+  <title>Agent Learning Hub · Road to Agent 90</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23a4492d'/%3E%3Cpath d='M18 45 30 16h5l12 29h-7l-3-8H27l-3 8Zm11-14h6l-3-8Z' fill='%23f3f0e9'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/course.css">
+  <link rel="stylesheet" href="assets/hub.css">
+  <script src="assets/hub.js" defer></script>
+</head>
+<body data-current-week="01">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="masthead">
+    <a class="brand" href="#top"><span>AGENT</span><i>/</i><span>LEARNING HUB</span></a>
+    <nav aria-label="Primary">
+      <a href="#curriculum">Curriculum</a>
+      <a href="#evidence">Evidence</a>
+      <a href="#glossary">Glossary</a>
+      <a href="#resources">Resources</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="repo-link" href="https://github.com/Kiokku/road-to-agent-90" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+      <button class="theme-toggle" type="button" aria-label="Toggle color theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="theme-label">Theme</span></button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="eyebrow"><span>FIELD NOTES / 2026</span><span>Frontend → Agent</span></div>
+      <div class="hero-grid">
+        <div>
+          <p class="kicker">A practical transformation, documented in public</p>
+          <h1 id="hero-title">From Frontend<br>to Agent Engineer</h1>
+          <p class="commitment">12 weeks <i>·</i> 120 hours <i>·</i> one Web Creation Agent</p>
+        </div>
+        <div class="mission-copy">
+          <p>在 12 周内达到前端 Agent / AI 应用开发岗位的面试要求，并以此作为长期转型全栈 Agent 应用工程师的第一阶段。</p>
+          <ul><li>完成并部署一个主作品 Web Creation Agent Workbench。</li><li>能独立解释主作品的事件流、工具权限、失败恢复和技术取舍。</li><li>通过围绕主作品的模拟面试，并开始投递前端 Agent / AI 应用岗位。</li></ul>
+        </div>
+      </div>
+      <div class="current-rail" id="current">
+        <div class="current-label"><span class="pulse" aria-hidden="true"></span>Current focus</div>
+        <div class="current-number">W01</div>
+        <div class="current-copy">
+          <h2>最小 Agent Loop</h2>
+          <p>能解释并实现 request → function call → execute → function_call_output → final response。</p>
+        </div>
+        <a class="primary-action" href="#week-01" data-current-link>Continue Week 01<span aria-hidden="true">↓</span></a>
+      </div>
+    </section>
+
+    <section class="section curriculum" id="curriculum" aria-labelledby="curriculum-title">
+      <header class="section-heading">
+        <p>01 / Curriculum</p>
+        <h2 id="curriculum-title">Twelve verified vertical slices.</h2>
+        <span>0 of 12 weeks verified</span>
+      </header>
+      <div class="week-list">
+    <details class="week-row" id="week-01" data-week="01" open>
+      <summary>
+        <span class="week-index">01</span>
+        <span class="week-heading"><strong>最小 Agent Loop</strong><small>2026-07-20 — 2026-07-26</small></span>
+        <span class="week-status week-status--current">Current</span>
+        <span class="disclosure" aria-hidden="true"></span>
+      </summary>
+      <div class="week-body">
+        <dl>
+          <div><dt>Outcome</dt><dd>能解释并实现 request → function call → execute → function_call_output → final response。</dd></div>
+          <div><dt>Build</dt><dd>用 TypeScript 和 Responses-compatible API 写最小 CLI Agent Loop，只开放一个无副作用工具并设置明确终止条件。</dd></div>
+          <div><dt>Verify</dt><dd>测试工具被正确调用、参数校验失败、模型不调用工具和超过最大轮次四条路径。</dd></div>
+          <div><dt>Explain</dt><dd>不看代码画出循环，说明 call_id、工具结果回填和无限循环风险。</dd></div>
+          <div><dt>Interview</dt><dd>回答“Agent 与一次普通 LLM 请求的本质区别是什么？”</dd></div>
+        </dl>
+      </div>
+    </details>
+    <details class="week-row" data-week="02" >
+      <summary>
+        <span class="week-index">02</span>
+        <span class="week-heading"><strong>Model Profile 与 Packy 能力检查</strong><small>2026-07-27 — 2026-08-02</small></span>
+        <span class="week-status week-status--upcoming">Upcoming</span>
+        <span class="disclosure" aria-hidden="true"></span>
+      </summary>
+      <div class="week-body">
+        <dl>
+          <div><dt>Outcome</dt><dd>受控选择服务端 Model Profile，并知道“OpenAI-compatible”不等于 Responses-compatible。</dd></div>
+          <div><dt>Build</dt><dd>实现 Profile loader；配置 Packy Terra Profile，Base URL 为 https://www.packyapi.com/v1，Model ID 为 gpt-5.6-terra。</dd></div>
+          <div><dt>Verify</dt><dd>用真实 Token 检查 /responses、typed streaming event、function calling、错误结构和取消行为；不通过的 Profile 不出现在选择器中。</dd></div>
+          <div><dt>Explain</dt><dd>说明 Base URL、Model ID、Key 环境变量和 capability gate 分别解决什么问题。</dd></div>
+          <div><dt>Interview</dt><dd>回答“如何安全支持自定义模型而不把 API Key 暴露给浏览器？”</dd></div>
+        </dl>
+      </div>
+    </details>
+    <details class="week-row" data-week="03" >
+      <summary>
+        <span class="week-index">03</span>
+        <span class="week-heading"><strong>Node API、Session 与事件契约</strong><small>2026-08-03 — 2026-08-09</small></span>
+        <span class="week-status week-status--upcoming">Upcoming</span>
+        <span class="disclosure" aria-hidden="true"></span>
+      </summary>
+      <div class="week-body">
+        <dl>
+          <div><dt>Outcome</dt><dd>浏览器不直接调用模型，Node 服务持有 Agent Loop、凭据和运行状态。</dd></div>
+          <div><dt>Build</dt><dd>建立最小 Node/TypeScript API，定义 run/session 以及 planning、tool_call、observation、artifact、approval_required、error、completed 事件。</dd></div>
+          <div><dt>Verify</dt><dd>事件 schema 有运行时校验；非法状态转换和未知事件会失败；API Key 不进入客户端 bundle。</dd></div>
+          <div><dt>Explain</dt><dd>说明浏览器、API、Agent Loop 与工具之间的状态所有权。</dd></div>
+          <div><dt>Interview</dt><dd>回答“为什么 Agent UI 需要自己的领域事件，而不是透传模型事件？”</dd></div>
+        </dl>
+      </div>
+    </details>
+    <details class="week-row" data-week="04" >
+      <summary>
+        <span class="week-index">04</span>
+        <span class="week-heading"><strong>SSE Streaming、取消与重试</strong><small>2026-08-10 — 2026-08-16</small></span>
+        <span class="week-status week-status--upcoming">Upcoming</span>
+        <span class="disclosure" aria-hidden="true"></span>
+      </summary>
+      <div class="week-body">
+        <dl>
+          <div><dt>Outcome</dt><dd>UI 能把不完整、失败和取消中的 Agent 运行变成一致状态。</dd></div>
+          <div><dt>Build</dt><dd>React UI 消费 SSE，增量显示事件时间线；支持 AbortController 取消和显式重试。</dd></div>
+          <div><dt>Verify</dt><dd>覆盖正常完成、中途取消、连接断开、重复事件和服务端错误；每次运行只有一个终态。</dd></div>
+          <div><dt>Explain</dt><dd>说明 SSE 与 WebSocket 的取舍、断线后为何不能盲目重放副作用工具。</dd></div>
+          <div><dt>Interview</dt><dd>回答“流式 Agent UI 最难处理的状态是什么？”</dd></div>
+        </dl>
+      </div>
+    </details>
+    <details class="week-row" data-week="05" >
+      <summary>
+        <span class="week-index">05</span>
+        <span class="week-heading"><strong>文件工具与生成站点工作区</strong><small>2026-08-17 — 2026-08-23</small></span>
+        <span class="week-status week-status--upcoming">Upcoming</span>
+        <span class="disclosure" aria-hidden="true"></span>
+      </summary>
+      <div class="week-body">
+        <dl>
+          <div><dt>Outcome</dt><dd>Agent 只能在隔离的生成站点目录中读取和修改允许的文件。</dd></div>
+          <div><dt>Build</dt><dd>添加列目录、读文件、写文件和检查工作区工具；从固定 React/Vite scaffold 创建单页站点。</dd></div>
+          <div><dt>Verify</dt><dd>路径穿越、工作区外写入、非法文件类型和超大写入被拒绝；工具调用全部进入 trace。</dd></div>
+          <div><dt>Explain</dt><dd>说明工具 schema、文件边界和模型输出为何不能直接写入任意路径。</dd></div>
+          <div><dt>Interview</dt><dd>回答“Coding Agent 的主要风险来自模型文本还是工具执行？”</dd></div>
+        </dl>
+      </div>
+    </details>
+    <details class="week-row" data-week="06" >
+      <summary>
+        <span class="week-index">06</span>
+        <span class="week-heading"><strong>Étiquette Style Profile 与首个风格化站点</strong><small>2026-08-24 — 2026-08-30</small></span>
+        <span class="week-status week-status--upcoming">Upcoming</span>
+        <span class="disclosure" aria-hidden="true"></span>
+      </summary>
+      <div class="week-body">
+        <dl>
+          <div><dt>Outcome</dt><dd>Agent 每次生成前读取唯一一个已批准、带版本号的 Style Profile。</dd></div>
+          <div><dt>Build</dt><dd>将 Étiquette Shared Brand Core 与一个 Project Style 固化为 V1 Style Profile，并生成首个符合契约的响应式单页站点。</dd></div>
+          <div><dt>Verify</dt><dd>检查必需 token、字体角色、浅深主题、WCAG AA、390px/1440px 布局和禁止项；记录不满足项而非伪造通过。</dd></div>
+          <div><dt>Explain</dt><dd>区分 Style Source、Style Study、Style Profile 与生成站点的职责。</dd></div>
+          <div><dt>Interview</dt><dd>回答“如何评估模型是否真正遵守设计规范？”</dd></div>
+        </dl>
+      </div>
+    </details>
+    <details class="week-row" data-week="07" >
+      <summary>
+        <span class="week-index">07</span>
+        <span class="week-heading"><strong>构建、预览与一次自动修复</strong><small>2026-08-31 — 2026-09-06</small></span>
+        <span class="week-status week-status--upcoming">Upcoming</span>
+        <span class="disclosure" aria-hidden="true"></span>
+      </summary>
+      <div class="week-body">
+        <dl>
+          <div><dt>Outcome</dt><dd>用户能看到真实构建结果；构建失败时 Agent 能基于错误进行一次受限修复。</dd></div>
+          <div><dt>Build</dt><dd>运行依赖安装、构建和本地预览；将结构化 build error 回填 Agent，最多允许一次修复循环。</dd></div>
+          <div><dt>Verify</dt><dd>成功构建、语法错误、依赖错误、修复成功和修复后仍失败均有确定终态与日志。</dd></div>
+          <div><dt>Explain</dt><dd>说明自动修复的重试上限、幂等性和何时必须停止并交给用户。</dd></div>
+          <div><dt>Interview</dt><dd>回答“为什么不能让 Agent 无限自我修复？”</dd></div>
+        </dl>
+      </div>
+    </details>
+    <details class="week-row" data-week="08" >
+      <summary>
+        <span class="week-index">08</span>
+        <span class="week-heading"><strong>多轮修改、Diff 与版本记录</strong><small>2026-09-07 — 2026-09-13</small></span>
+        <span class="week-status week-status--upcoming">Upcoming</span>
+        <span class="disclosure" aria-hidden="true"></span>
+      </summary>
+      <div class="week-body">
+        <dl>
+          <div><dt>Outcome</dt><dd>用户可以基于当前预览提出修改，并在接受前审查具体变更。</dd></div>
+          <div><dt>Build</dt><dd>保存生成版本；支持对话式修改、文件 diff、版本切换和拒绝本轮变更。</dd></div>
+          <div><dt>Verify</dt><dd>修改只作用于当前生成站点；拒绝后恢复上一版本；上下文没有丢失 Style Profile 版本。</dd></div>
+          <div><dt>Explain</dt><dd>说明版本、session、模型上下文与磁盘状态为何不能混为一体。</dd></div>
+          <div><dt>Interview</dt><dd>完成第一次 30 分钟模拟面试，围绕前 8 周作品追问。</dd></div>
+        </dl>
+      </div>
+    </details>
+    <details class="week-row" data-week="09" >
+      <summary>
+        <span class="week-index">09</span>
+        <span class="week-heading"><strong>工具权限、部署批准与 Trace</strong><small>2026-09-14 — 2026-09-20</small></span>
+        <span class="week-status week-status--upcoming">Upcoming</span>
+        <span class="disclosure" aria-hidden="true"></span>
+      </summary>
+      <div class="week-body">
+        <dl>
+          <div><dt>Outcome</dt><dd>本地安全动作可自动执行，公开部署必须等待明确批准。</dd></div>
+          <div><dt>Build</dt><dd>为工具定义风险级别；实现 approval_required → approved/rejected；按 run 展示输入、工具、耗时、错误和结果。</dd></div>
+          <div><dt>Verify</dt><dd>无批准无法部署；拒绝不会改变外部状态；过期批准不能用于新版本；敏感值不会进入 trace。</dd></div>
+          <div><dt>Explain</dt><dd>说明 capability、authorization、approval 和 audit 的区别。</dd></div>
+          <div><dt>Interview</dt><dd>演示一次被拒绝的高风险工具调用。</dd></div>
+        </dl>
+      </div>
+    </details>
+    <details class="week-row" data-week="10" >
+      <summary>
+        <span class="week-index">10</span>
+        <span class="week-heading"><strong>Cloudflare Pages 自动部署</strong><small>2026-09-21 — 2026-09-27</small></span>
+        <span class="week-status week-status--upcoming">Upcoming</span>
+        <span class="disclosure" aria-hidden="true"></span>
+      </summary>
+      <div class="week-body">
+        <dl>
+          <div><dt>Outcome</dt><dd>用户批准后，Agent 自动构建并通过 Cloudflare Pages Direct Upload 发布当前版本。</dd></div>
+          <div><dt>Build</dt><dd>封装 wrangler pages deploy 部署工具，回填 deployment ID、公开 URL、构建版本和失败信息。</dd></div>
+          <div><dt>Verify</dt><dd>覆盖成功、鉴权失败、构建目录缺失、网络失败和重复部署；同一批准只对应一个版本。</dd></div>
+          <div><dt>Explain</dt><dd>说明 Direct Upload 与 Git integration 的取舍，以及为什么部署属于外部写操作。</dd></div>
+          <div><dt>Interview</dt><dd>演示从需求到公开 URL 的完整链路。</dd></div>
+        </dl>
+      </div>
+    </details>
+    <details class="week-row" data-week="11" >
+      <summary>
+        <span class="week-index">11</span>
+        <span class="week-heading"><strong>Evals、失败注入与关键测试</strong><small>2026-09-28 — 2026-10-04</small></span>
+        <span class="week-status week-status--upcoming">Upcoming</span>
+        <span class="disclosure" aria-hidden="true"></span>
+      </summary>
+      <div class="week-body">
+        <dl>
+          <div><dt>Outcome</dt><dd>能用固定任务和失败分类判断改动是否提高产品质量。</dd></div>
+          <div><dt>Build</dt><dd>建立 10–20 条 eval case，覆盖生成质量、Style Profile 遵守、工具成功率、取消、修复和部署批准。</dd></div>
+          <div><dt>Verify</dt><dd>输出成功率、失败分类、延迟、工具调用次数和人工确认记录；至少根据一次失败改进实现并复跑。</dd></div>
+          <div><dt>Explain</dt><dd>区分单元测试、集成测试、eval 和人工视觉验收。</dd></div>
+          <div><dt>Interview</dt><dd>回答“你如何知道 Agent 改版后真的变好了？”</dd></div>
+        </dl>
+      </div>
+    </details>
+    <details class="week-row" data-week="12" >
+      <summary>
+        <span class="week-index">12</span>
+        <span class="week-heading"><strong>交付与面试叙事</strong><small>2026-10-05 — 2026-10-11</small></span>
+        <span class="week-status week-status--upcoming">Upcoming</span>
+        <span class="disclosure" aria-hidden="true"></span>
+      </summary>
+      <div class="week-body">
+        <dl>
+          <div><dt>Outcome</dt><dd>主作品可一键启动并在 5–10 分钟内完整演示，材料可以直接用于投递。</dd></div>
+          <div><dt>Build</dt><dd>完成 README、架构图、演示脚本、失败案例、技术取舍、简历项目描述和本地一键启动。</dd></div>
+          <div><dt>Verify</dt><dd>在干净环境按 README 启动；演示生成、修改、拒绝、批准、失败恢复和 Cloudflare URL；完成两次模拟面试。</dd></div>
+          <div><dt>Explain</dt><dd>用前端背景说明自己为什么能处理 Agent 的不确定状态、信任与工具可见性。</dd></div>
+          <div><dt>Interview</dt><dd>开始投递前端 AI / Agent 应用岗位并根据反馈更新问题库。</dd></div>
+        </dl>
+      </div>
+    </details></div>
+    </section>
+
+    <section class="build-section" aria-labelledby="build-title">
+      <div class="section-heading section-heading--inverse">
+        <p>02 / What you’ll build</p>
+        <h2 id="build-title">One product.<br>Twelve capabilities.</h2>
+        <span>Web Creation Agent Workbench</span>
+      </div>
+      <ol class="capability-track">
+  <li class="capability-item is-current">
+    <span>01</span><strong>最小 Agent Loop</strong>
+  </li>
+  <li class="capability-item ">
+    <span>02</span><strong>Model Profile 与 Packy 能力检查</strong>
+  </li>
+  <li class="capability-item ">
+    <span>03</span><strong>Node API、Session 与事件契约</strong>
+  </li>
+  <li class="capability-item ">
+    <span>04</span><strong>SSE Streaming、取消与重试</strong>
+  </li>
+  <li class="capability-item ">
+    <span>05</span><strong>文件工具与生成站点工作区</strong>
+  </li>
+  <li class="capability-item ">
+    <span>06</span><strong>Étiquette Style Profile 与首个风格化站点</strong>
+  </li>
+  <li class="capability-item ">
+    <span>07</span><strong>构建、预览与一次自动修复</strong>
+  </li>
+  <li class="capability-item ">
+    <span>08</span><strong>多轮修改、Diff 与版本记录</strong>
+  </li>
+  <li class="capability-item ">
+    <span>09</span><strong>工具权限、部署批准与 Trace</strong>
+  </li>
+  <li class="capability-item ">
+    <span>10</span><strong>Cloudflare Pages 自动部署</strong>
+  </li>
+  <li class="capability-item ">
+    <span>11</span><strong>Evals、失败注入与关键测试</strong>
+  </li>
+  <li class="capability-item ">
+    <span>12</span><strong>交付与面试叙事</strong>
+  </li></ol>
+    </section>
+
+    <section class="section" id="evidence" aria-labelledby="evidence-title">
+      <header class="section-heading">
+        <p>03 / Learning evidence</p>
+        <h2 id="evidence-title">Claims require artifacts.</h2>
+        <span>0 Lessons · 0 verified weeks · 7 Records</span>
+      </header>
+      <div class="evidence-grid">
+        <div>
+          <div class="subheading"><span>Lessons</span><small>Interactive teaching artifacts</small></div>
+          <div class="empty-row"><span>Lessons</span><p>No Lesson yet. Start Week 01 with <code>teach</code>.</p></div>
+          <div class="subheading subheading--spaced"><span>Weekly evidence</span><small>Build · Test · Demo · Explain</small></div>
+          <div class="empty-row"><span>Evidence</span><p>No verified weekly evidence yet. Reading alone does not count.</p></div>
+        </div>
+        <div>
+          <div class="subheading"><span>Learning Records</span><small>Prior knowledge and confirmed decisions</small></div>
+  <a class="ledger-row" href="learning-records/0001-react-typescript-primary-stack.md">
+    <span class="ledger-index">R01</span>
+    <span><strong>React 与 TypeScript 是主要技术栈</strong><small>学习者已说明 React 与 TypeScript 是其主要技术栈，并以封装 TanStack Table 与虚拟列表的复杂业务表格作为项目证据。后续课程不应从基础语法、入门组件或通用大列表性能重新开始，但目前仍需确认流式交互与 Agent 事件状态管理能力。</small></span>
+    <span class="row-arrow" aria-hidden="true">↗</span>
+  </a>
+  <a class="ledger-row" href="learning-records/0002-streaming-agent-ui-gap.md">
+    <span class="ledger-index">R02</span>
+    <span><strong>尚未建立流式 Agent UI 闭环</strong><small>学习者尚未独立实现 SSE 或 fetch stream 的增量渲染、中断、事件解析、失败重试和状态恢复。后续教学应跳过通用 React 基础，优先用主作品建立并验证这条完整事件闭环。</small></span>
+    <span class="row-arrow" aria-hidden="true">↗</span>
+  </a>
+  <a class="ledger-row" href="learning-records/0003-agent-loop-gap.md">
+    <span class="ledger-index">R03</span>
+    <span><strong>尚未实现最小 Agent Loop</strong><small>学习者尚未亲手实现模型选择工具、程序执行工具、回填观察结果并产生最终回答的最小循环。后续教学应先用 TypeScript 建立可解释、可测试的 Agent runtime 因果链，再将其事件映射到 Agent UI。</small></span>
+    <span class="row-arrow" aria-hidden="true">↗</span>
+  </a>
+  <a class="ledger-row" href="learning-records/0004-llm-api-exposure.md">
+    <span class="ledger-index">R04</span>
+    <span><strong>有 LLM API 接入经历但尚未理解协议结构</strong><small>学习者曾使用 Codex 编写接入 OpenAI API 的小工具，已有真实调用经验，但没有详细理解 API 的请求、响应及结构化输出结构。后续教学应从拆解并重写已有调用开始，而不是从通用 HTTP 或纯概念介绍开始。</small></span>
+    <span class="row-arrow" aria-hidden="true">↗</span>
+  </a>
+  <a class="ledger-row" href="learning-records/0005-node-api-gap.md">
+    <span class="ledger-index">R05</span>
+    <span><strong>尚未独立承担 Node API</strong><small>学习者尚未独立开发或长期维护 Node.js/TypeScript API、BFF 或其他服务端接口。短期主作品必须包含由学习者负责的最小 TypeScript API 纵切，以形成从浏览器到 Agent runtime 的端到端能力证据。</small></span>
+    <span class="row-arrow" aria-hidden="true">↗</span>
+  </a>
+  <a class="ledger-row" href="learning-records/0006-main-project-web-creation-agent.md">
+    <span class="ledger-index">R06</span>
+    <span><strong>主作品调整为 Web Creation Agent Workbench</strong><small>短期主作品已从通用 Coding Agent 调整为复刻 Kimi 核心建站闭环的 Web Creation Agent Workbench。它消费 Étiquette 的批准风格契约，生成特定风格的单页 React 网站并完成预览、修改、批准和部署；完整 Kimi 功能与 Étiquette 风格提取流程不属于 12 周范围。</small></span>
+    <span class="row-arrow" aria-hidden="true">↗</span>
+  </a>
+  <a class="ledger-row" href="learning-records/0007-model-selector-requirement.md">
+    <span class="ledger-index">R07</span>
+    <span><strong>主作品需要受控模型选择器</strong><small>主作品不再限定官方 OpenAI 模型，而是通过服务端管理的 Model Profile 接入官方 OpenAI 与 Responses-compatible 自定义模型。该要求保留模型选择能力，同时把密钥、Base URL 和能力验证留在服务端，避免浏览器接收敏感配置。</small></span>
+    <span class="row-arrow" aria-hidden="true">↗</span>
+  </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reference-section" id="glossary" aria-labelledby="glossary-title">
+      <header class="section-heading">
+        <p>04 / Shared language</p>
+        <h2 id="glossary-title">Glossary.</h2>
+        <span>20 project-specific definitions</span>
+      </header>
+      <dl class="glossary-list">
+  <div class="glossary-entry">
+    <span>01</span>
+    <dt>短期达标</dt>
+    <dd>在 12 周内完成并部署主作品，能解释关键取舍、通过相关模拟面试并开始投递目标岗位。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>02</span>
+    <dt>主作品</dt>
+    <dd>短期阶段用于集中学习成果、能力证据和面试叙事的唯一核心作品，即 Web Creation Agent Workbench。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>03</span>
+    <dt>Web Creation Agent Workbench</dt>
+    <dd>消费经批准的 Étiquette 风格契约，从自然语言需求生成单页 React 网站，支持流式构建、预览、对话修改、diff、人工批准和自动部署的网页制作 Agent。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>04</span>
+    <dt>风格契约</dt>
+    <dd>由 Étiquette 提供并经过批准、供网页制作 Agent 读取的版本化设计规则，例如 `DESIGN.md` 或 Style Profile。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>05</span>
+    <dt>V1 Style Profile</dt>
+    <dd>仓库内置的唯一一个、经批准且带版本号的 Étiquette 风格契约，Agent 每次生成站点时都必须读取并遵守。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>06</span>
+    <dt>部署批准</dt>
+    <dd>用户在检查预览和变更后，授权 Agent 将当前生成站点公开发布的一次明确指令。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>07</span>
+    <dt>部署运行</dt>
+    <dd>部署批准后由 Agent 自动执行并记录构建、发布、结果 URL 和失败信息的一次工具运行。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>08</span>
+    <dt>发布目标</dt>
+    <dd>接收生成站点预构建静态资源的 Cloudflare Pages Direct Upload 项目。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>09</span>
+    <dt>Model Profile</dt>
+    <dd>由服务端预先配置、供前端选择的 Responses-compatible 模型定义，包含显示名称、Base URL、Model ID、密钥环境变量和必要能力声明。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>10</span>
+    <dt>Responses-compatible 模型</dt>
+    <dd>通过能力检查、能够提供项目所需 Responses API streaming 与 function calling 语义的模型服务。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>11</span>
+    <dt>Packy Terra Profile</dt>
+    <dd>V1 计划实际使用的 Model Profile，Base URL 为 `https://www.packyapi.com/v1`，Model ID 为 `gpt-5.6-terra`；通过真实能力检查前状态为待验证。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>12</span>
+    <dt>Agent Loop</dt>
+    <dd>应用通过 Responses API 向模型提供工具，接收并执行 function call，回填工具结果，直到模型产生最终回答或运行失败、取消、超过限制。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>13</span>
+    <dt>能力切片</dt>
+    <dd>用于证明一项具体 Agent 应用能力、但不承担独立作品范围的可演示功能或练习成果。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>14</span>
+    <dt>纵切 Lesson</dt>
+    <dd>一次只建立一项知识与技能，并为主作品增加可运行、可验证成果的教学单元。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>15</span>
+    <dt>作品证据链</dt>
+    <dd>由连续纵切 Lesson 累积形成、能够证明能力成长和主作品技术取舍的一组关联成果。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>16</span>
+    <dt>完成证据</dt>
+    <dd>证明一个纵切已经通过测试、能够演示且学习者可以解释其机制与取舍的可核验成果。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>17</span>
+    <dt>学习事实来源</dt>
+    <dd>决定学习状态与进度的仓库文件和完成证据，包括 Mission、Lesson 与 Learning Record。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>18</span>
+    <dt>Agent Learning Hub</dt>
+    <dd>读取学习事实来源并呈现使命、路线、当前 Lesson、完成证据和复习状态的只读入口。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>19</span>
+    <dt>教学工作区</dt>
+    <dd>仓库根目录中保存 Mission、Lesson、Learning Record、Reference、Hub 与其他学习事实的区域。</dd>
+  </div>
+  <div class="glossary-entry">
+    <span>20</span>
+    <dt>主作品工作区</dt>
+    <dd>`projects/web-creation-agent-workbench/` 中持续累积产品代码、测试与每周完成证据的实现区域。</dd>
+  </div></dl>
+    </section>
+
+    <section class="section" id="resources" aria-labelledby="resources-title">
+      <header class="section-heading">
+        <p>05 / Source library</p>
+        <h2 id="resources-title">Read close to the source.</h2>
+        <span>17 annotated references</span>
+      </header>
+      <div class="resource-list">
+  <a class="resource-row" href="https://developers.openai.com/api/docs/guides/function-calling" target="_blank" rel="noreferrer">
+    <span>01</span>
+    <span><strong>OpenAI: Function calling</strong><small>Responses API 工具调用的权威流程。用于 Week 01 的 Agent Loop、工具结果回填和终止条件。</small></span>
+    <em>Knowledge</em>
+  </a>
+  <a class="resource-row" href="https://developers.openai.com/api/docs/guides/streaming-responses" target="_blank" rel="noreferrer">
+    <span>02</span>
+    <span><strong>OpenAI: Streaming API responses</strong><small>Typed streaming event 与 SSE 官方说明。用于 Week 02–04 的能力检查和流式 UI。</small></span>
+    <em>Knowledge</em>
+  </a>
+  <a class="resource-row" href="https://developers.openai.com/api/docs/guides/agents#agents-sdk-vs-responses-api" target="_blank" rel="noreferrer">
+    <span>03</span>
+    <span><strong>OpenAI: Agents SDK vs. Responses API</strong><small>用于解释为何短期直接控制 orchestration，并在长期比较 Agents SDK。</small></span>
+    <em>Knowledge</em>
+  </a>
+  <a class="resource-row" href="https://developers.openai.com/api/docs/guides/latest-model" target="_blank" rel="noreferrer">
+    <span>04</span>
+    <span><strong>OpenAI: Using latest models</strong><small>官方 Responses 模型选择与能力参考。Packy 的 `gpt-5.6-terra` 是独立 Profile，不能借此推定等价能力。</small></span>
+    <em>Knowledge</em>
+  </a>
+  <a class="resource-row" href="https://docs.packyapi.com/docs/cli/" target="_blank" rel="noreferrer">
+    <span>05</span>
+    <span><strong>PackyAPI: CLI 配置</strong><small>PackyAPI Responses wire 与 Base URL 的第一方说明。实际 streaming/function calling 仍需真实 Token 验证。</small></span>
+    <em>Knowledge</em>
+  </a>
+  <a class="resource-row" href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events" target="_blank" rel="noreferrer">
+    <span>06</span>
+    <span><strong>MDN: Using server-sent events</strong><small>SSE 浏览器行为与事件格式。用于 Week 04 的传输层实现。</small></span>
+    <em>Knowledge</em>
+  </a>
+  <a class="resource-row" href="https://developer.mozilla.org/en-US/docs/Web/API/AbortController" target="_blank" rel="noreferrer">
+    <span>07</span>
+    <span><strong>MDN: AbortController</strong><small>浏览器取消异步操作的标准接口。用于取消与重试边界。</small></span>
+    <em>Knowledge</em>
+  </a>
+  <a class="resource-row" href="https://nodejs.org/api/webstreams.html" target="_blank" rel="noreferrer">
+    <span>08</span>
+    <span><strong>Node.js: Web Streams API</strong><small>Node 流与 Web Streams 的官方参考。用于 Node API 的流式桥接。</small></span>
+    <em>Knowledge</em>
+  </a>
+  <a class="resource-row" href="https://react.dev/learn/managing-state" target="_blank" rel="noreferrer">
+    <span>09</span>
+    <span><strong>React: Managing State</strong><small>用于把 Agent 领域事件归约成一致 UI 状态，不复习通用 React 入门。</small></span>
+    <em>Knowledge</em>
+  </a>
+  <a class="resource-row" href="https://vite.dev/guide/backend-integration" target="_blank" rel="noreferrer">
+    <span>10</span>
+    <span><strong>Vite: Backend Integration</strong><small>生成站点构建与服务端集成参考。</small></span>
+    <em>Knowledge</em>
+  </a>
+  <a class="resource-row" href="https://developers.cloudflare.com/pages/get-started/direct-upload/" target="_blank" rel="noreferrer">
+    <span>11</span>
+    <span><strong>Cloudflare Pages: Direct Upload</strong><small>预构建静态资源经 Wrangler 发布到 Pages 的权威流程。用于 Week 10。</small></span>
+    <em>Knowledge</em>
+  </a>
+  <a class="resource-row" href="https://www.kimi.com/zh-sg/help/websites/websites-overview" target="_blank" rel="noreferrer">
+    <span>12</span>
+    <span><strong>Kimi: 网页功能概览</strong><small>主作品的产品参照；只复刻对话生成、预览修改与部署核心闭环。</small></span>
+    <em>Knowledge</em>
+  </a>
+  <a class="resource-row" href="reference/etiquette-v1-style-source.md" >
+    <span>13</span>
+    <span><strong>本地：Étiquette V1 规格</strong><small>Style Profile、Shared Brand Core、证据分级和人工批准的本地事实来源。</small></span>
+    <em>Knowledge</em>
+  </a>
+  <a class="resource-row" href="https://vitest.dev/guide/" target="_blank" rel="noreferrer">
+    <span>14</span>
+    <span><strong>Vitest</strong><small>用于主作品的单元与集成验证。</small></span>
+    <em>Knowledge</em>
+  </a>
+  <a class="resource-row" href="https://playwright.dev/docs/intro" target="_blank" rel="noreferrer">
+    <span>15</span>
+    <span><strong>Playwright</strong><small>用于主作品和 Hub 的真实浏览器验收。</small></span>
+    <em>Knowledge</em>
+  </a>
+  <a class="resource-row" href="https://community.openai.com/" target="_blank" rel="noreferrer">
+    <span>16</span>
+    <span><strong>OpenAI Developer Community</strong><small>用于核对 Responses API 实践问题和真实故障案例；采用答案前回到官方文档验证。</small></span>
+    <em>Wisdom (Communities)</em>
+  </a>
+  <a class="resource-row" href="https://discord.cloudflare.com/" target="_blank" rel="noreferrer">
+    <span>17</span>
+    <span><strong>Cloudflare Developers Discord</strong><small>用于 Pages Direct Upload、Wrangler 与部署故障的实践反馈。</small></span>
+    <em>Wisdom (Communities)</em>
+  </a></div>
+    </section>
+
+    <section class="section after-section" id="after">
+      <details class="after-details">
+        <summary>
+          <span>06 / After Week 12</span>
+          <strong>Full-stack Agent application engineering</strong>
+          <span class="disclosure" aria-hidden="true"></span>
+        </summary>
+        <div class="after-body">
+          <p>Long-term study begins only after the short-term interview goal is complete.</p>
+          <a href="docs/long-term-roadmap.md">Open the long-term route <span aria-hidden="true">↗</span></a>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand" href="#top"><span>AGENT</span><i>/</i><span>LEARNING HUB</span></a>
+    <p>2026-07-20 — 2026-10-11<br>Built from repository evidence · Generated 2026-07-20</p>
+    <a href="docs/agent-learning-hub.md">How this Hub works ↗</a>
+  </footer>
+</body>
+</html>

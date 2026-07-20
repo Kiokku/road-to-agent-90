@@ -1,0 +1,121 @@
+:root {
+  color-scheme: light;
+  --canvas: #f3f0e9;
+  --canvas-raised: #f8f5ef;
+  --ink: #2b2621;
+  --ink-soft: #554d46;
+  --muted: #756c63;
+  --accent: #a4492d;
+  --accent-soft: #d9b8a9;
+  --rule: rgba(62, 50, 40, 0.18);
+  --rule-strong: rgba(62, 50, 40, 0.38);
+  --inverse: #27211d;
+  --inverse-ink: #eee8de;
+  --serif: Iowan Old Style, Baskerville, "Times New Roman", serif;
+  --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --content: min(1180px, calc(100vw - 80px));
+  --ease: 180ms ease;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas: #211d19;
+  --canvas-raised: #2a241f;
+  --ink: #eee8de;
+  --ink-soft: #c8beb3;
+  --muted: #9e9286;
+  --accent: #d57855;
+  --accent-soft: #704735;
+  --rule: rgba(238, 232, 222, 0.16);
+  --rule-strong: rgba(238, 232, 222, 0.35);
+  --inverse: #ede7dc;
+  --inverse-ink: #2b2621;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 68px;
+}
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  left: 16px;
+  top: 16px;
+  padding: 9px 13px;
+  background: var(--ink);
+  color: var(--canvas);
+  transform: translateY(-180%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+@media print {
+  :root {
+    --canvas: #fff;
+    --ink: #111;
+    --ink-soft: #333;
+    --muted: #555;
+    --rule: #bbb;
+  }
+
+  .masthead nav,
+  .theme-toggle,
+  .primary-action {
+    display: none !important;
+  }
+
+  .masthead {
+    position: static !important;
+  }
+
+  details {
+    display: block;
+  }
+
+  details > * {
+    display: block !important;
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --content: calc(100vw - 36px);
+  }
+}

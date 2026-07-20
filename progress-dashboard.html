@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agent 路线学习 Kanban</title>
+    <link rel="stylesheet" href="./progress-dashboard.css" />
+  </head>
+  <body>
+    <div class="app" id="appShell">
+      <aside class="sidebar" aria-label="路线导航">
+        <div class="brand">
+          <div class="brand-mark">AR</div>
+          <div class="brand-copy">
+            <strong>Agent Roadmap</strong>
+            <span>长期学习执行台</span>
+          </div>
+          <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="收起侧边栏" aria-expanded="true">‹</button>
+        </div>
+
+        <nav class="side-section" aria-label="主导航">
+          <div class="side-title">Workspace</div>
+          <button class="nav-item active" type="button" data-view="board" aria-label="学习看板"><span class="dot"></span><span>学习看板</span></button>
+          <button class="nav-item" type="button" data-view="portfolio" aria-label="作品集"><span class="dot"></span><span>作品集</span></button>
+          <button class="nav-item" type="button" data-view="interview" aria-label="面试表达"><span class="dot"></span><span>面试表达</span></button>
+          <button class="nav-item" type="button" data-view="review" aria-label="复盘沉淀"><span class="dot"></span><span>复盘沉淀</span></button>
+        </nav>
+
+        <div class="side-note">
+          <strong>今日默认动作</strong>
+          <p>先推进一张学习卡，再更新对应作品或验收材料。教程学习不超过 40%。</p>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="title-block">
+            <h1>前端到全栈 Agent 应用工程师路线</h1>
+            <p id="phaseSubtitle">0-3 个月 · 短期求职优先 · 当前焦点是可演示作品和面试叙事。</p>
+          </div>
+          <div class="toolbar" aria-label="看板工具">
+            <input class="search" id="searchInput" type="search" placeholder="筛选任务、资源或产出…" />
+            <button class="view-chip" id="focusButton" type="button">只看当前焦点</button>
+            <button class="view-chip" id="exportJsonButton" type="button">导出 JSON</button>
+            <label class="view-chip file-chip" for="importJsonInput">导入 JSON</label>
+            <input id="importJsonInput" type="file" accept="application/json" hidden />
+          </div>
+        </header>
+
+        <section class="phase-strip" id="phaseTabs" aria-label="阶段切换"></section>
+
+        <section class="dashboard-grid">
+          <section class="panel" aria-labelledby="kanbanTitle">
+            <div class="panel-header">
+              <div>
+                <h2 id="kanbanTitle">学习流程 Kanban</h2>
+                <p id="kanbanSummary">从路线文档拆成可执行任务，围绕学习、实现、视觉指南、面试表达和验收推进。</p>
+              </div>
+              <div class="status-line">
+                <span id="progressText">0% 推进</span>
+                <span class="mini-bar" aria-hidden="true"><span id="progressBar"></span></span>
+              </div>
+            </div>
+            <div class="kanban" id="kanbanBoard" aria-label="学习流程列"></div>
+          </section>
+
+          <aside class="panel deliverables-panel" aria-labelledby="deliverablesTitle">
+            <div class="panel-header">
+              <div>
+                <h2 id="deliverablesTitle">阶段交付物</h2>
+                <p id="deliverablesSummary">用于作品展示、简历投递和阶段复盘。</p>
+              </div>
+            </div>
+            <div class="deliverables" id="deliverables"></div>
+          </aside>
+        </section>
+
+        <section class="panel resource-panel" aria-labelledby="resourcesTitle">
+          <div class="resource-aside">
+            <h2 id="resourcesTitle">学习资源池</h2>
+            <p id="resourcesSubtitle">资源随阶段切换，避免把长期材料全部塞进当前阶段。</p>
+            <div class="principles">
+              <span><b>01</b> 每 2 周必须有一个可演示产出</span>
+              <span><b>02</b> 学习 40% / 作品实现 60%</span>
+              <span><b>03</b> 抽象概念先做视觉指南再沉淀表达</span>
+            </div>
+          </div>
+          <div class="resources" id="resources"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./progress-dashboard.js?v=20260527-ladder-pi-eval"></script>
+  </body>
+</html>
