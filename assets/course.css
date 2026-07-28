@@ -119,3 +119,463 @@ a {
     --content: calc(100vw - 36px);
   }
 }
+
+.masthead {
+  position: sticky;
+  z-index: 20;
+  top: 0;
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--canvas) 92%, transparent);
+  backdrop-filter: blur(14px);
+}
+
+.masthead__inner {
+  width: var(--content);
+  min-height: 58px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.masthead__brand {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  text-decoration: none;
+}
+
+.masthead nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.masthead nav a {
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.masthead nav a:hover {
+  color: var(--accent);
+}
+
+.lesson {
+  width: var(--content);
+  margin: 0 auto;
+}
+
+.lesson-hero {
+  padding: clamp(64px, 10vw, 132px) 0 clamp(52px, 8vw, 96px);
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+.eyebrow {
+  margin: 0 0 20px;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.lesson-hero h1 {
+  max-width: 900px;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(3rem, 8vw, 7.2rem);
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 0.92;
+}
+
+.lesson-hero__lede {
+  max-width: 720px;
+  margin: 30px 0 0;
+  color: var(--ink-soft);
+  font-family: var(--serif);
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
+  line-height: 1.5;
+}
+
+.lesson-meta {
+  margin: 42px 0 0;
+  padding: 20px 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  border-top: 1px solid var(--rule);
+}
+
+.lesson-meta dt {
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lesson-meta dd {
+  margin: 5px 0 0;
+  font-size: 0.94rem;
+}
+
+.lesson-layout {
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(0, 760px);
+  justify-content: space-between;
+  gap: clamp(48px, 8vw, 120px);
+  padding: clamp(56px, 8vw, 104px) 0 120px;
+}
+
+.lesson-nav {
+  align-self: start;
+  position: sticky;
+  top: 90px;
+}
+
+.lesson-nav p {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lesson-nav ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: lesson-nav;
+}
+
+.lesson-nav li {
+  counter-increment: lesson-nav;
+  border-top: 1px solid var(--rule);
+}
+
+.lesson-nav li:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+.lesson-nav a {
+  padding: 11px 0;
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  text-decoration: none;
+}
+
+.lesson-nav a::before {
+  color: var(--accent);
+  content: counter(lesson-nav, decimal-leading-zero);
+  font-variant-numeric: tabular-nums;
+}
+
+.lesson-content {
+  min-width: 0;
+}
+
+.lesson-section {
+  margin: 0 0 84px;
+  scroll-margin-top: 90px;
+}
+
+.lesson-section > h2 {
+  margin: 0 0 24px;
+  font-family: var(--serif);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+.lesson-section > h3 {
+  margin: 38px 0 12px;
+  font-size: 1rem;
+}
+
+.lesson-section p,
+.lesson-section li {
+  color: var(--ink-soft);
+}
+
+.lesson-section p {
+  max-width: 68ch;
+}
+
+.lesson-section a {
+  text-decoration-color: var(--accent-soft);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.lesson-section a:hover {
+  text-decoration-color: var(--accent);
+}
+
+.callout {
+  margin: 28px 0;
+  padding: 22px 24px;
+  border-left: 3px solid var(--accent);
+  background: var(--canvas-raised);
+}
+
+.callout strong {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--ink);
+}
+
+.callout p {
+  margin: 0;
+}
+
+.flow {
+  margin: 34px 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border-top: 1px solid var(--rule-strong);
+  list-style: none;
+  counter-reset: flow;
+}
+
+.flow li {
+  min-height: 112px;
+  padding: 16px 12px 12px 0;
+  counter-increment: flow;
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+.flow li::before {
+  display: block;
+  margin-bottom: 18px;
+  color: var(--accent);
+  content: counter(flow, decimal-leading-zero);
+  font-size: 0.72rem;
+}
+
+.flow li + li {
+  padding-left: 12px;
+  border-left: 1px solid var(--rule);
+}
+
+pre {
+  max-width: 100%;
+  margin: 24px 0;
+  padding: 22px 24px;
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  background: var(--inverse);
+  color: var(--inverse-ink);
+  font: 0.88rem/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  tab-size: 2;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+:not(pre) > code {
+  padding: 0.12em 0.32em;
+  border-radius: 3px;
+  background: var(--accent-soft);
+  color: var(--ink);
+  font-size: 0.88em;
+}
+
+.file-map,
+.checklist,
+.steps {
+  margin: 24px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.file-map li,
+.checklist li,
+.steps li {
+  padding: 14px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.file-map li:last-child,
+.checklist li:last-child,
+.steps li:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+.file-map code {
+  display: inline-block;
+  min-width: 16rem;
+  color: var(--ink);
+}
+
+.checklist li {
+  padding-left: 30px;
+  position: relative;
+}
+
+.checklist li::before {
+  width: 14px;
+  height: 14px;
+  position: absolute;
+  top: 19px;
+  left: 2px;
+  border: 1px solid var(--accent);
+  content: "";
+}
+
+.steps {
+  counter-reset: steps;
+}
+
+.steps li {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 12px;
+  counter-increment: steps;
+}
+
+.steps li::before {
+  color: var(--accent);
+  content: counter(steps, decimal-leading-zero);
+  font-variant-numeric: tabular-nums;
+}
+
+.test-table {
+  width: 100%;
+  margin: 28px 0;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.test-table th,
+.test-table td {
+  padding: 13px 12px 13px 0;
+  border-top: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+
+.test-table th {
+  color: var(--muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.test-table tr:last-child td {
+  border-bottom: 1px solid var(--rule);
+}
+
+.checkpoint {
+  margin: 32px 0;
+  padding: 26px;
+  border: 1px solid var(--rule-strong);
+  background: var(--canvas-raised);
+}
+
+.checkpoint h3 {
+  margin: 0 0 8px;
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.answer {
+  margin: 18px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.answer summary {
+  padding: 14px 0;
+  color: var(--accent);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.answer p {
+  padding: 0 0 16px;
+}
+
+.lesson-footer {
+  padding: 36px 0 60px;
+  border-top: 1px solid var(--rule-strong);
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.lesson-footer__inner {
+  width: var(--content);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.lesson-footer p {
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .lesson-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .lesson-nav {
+    position: static;
+  }
+
+  .flow {
+    grid-template-columns: 1fr;
+  }
+
+  .flow li,
+  .flow li + li {
+    min-height: 0;
+    padding: 13px 0;
+    border-left: 0;
+  }
+
+  .flow li::before {
+    display: inline-block;
+    margin: 0 12px 0 0;
+  }
+}
+
+@media (max-width: 620px) {
+  .masthead__inner,
+  .lesson-footer__inner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .masthead__inner {
+    padding: 12px 0;
+  }
+
+  .lesson-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .lesson-hero h1 {
+    font-size: clamp(2.7rem, 14vw, 4.8rem);
+  }
+
+  .file-map code {
+    min-width: 0;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .test-table {
+    display: block;
+    overflow-x: auto;
+  }
+}

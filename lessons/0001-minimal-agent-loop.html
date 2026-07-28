@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="用 TypeScript 和可注入的模型端口，实现 Web Creation Agent Workbench 的第一个可测试、可演示、可解释纵切：最小 Agent Loop。"
+    >
+    <title>Lesson 0001 · 最小 Agent Loop</title>
+    <link rel="stylesheet" href="../assets/course.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#lesson-content">跳到课程正文</a>
+
+    <header class="masthead">
+      <div class="masthead__inner">
+        <a class="masthead__brand" href="../learning-hub.html">Agent Learning Hub</a>
+        <nav aria-label="课程相关资料">
+          <a href="../MISSION.md">Mission</a>
+          <a href="../docs/12-week-roadmap.md">12 Week 路线</a>
+          <a href="../RESOURCES.md">Resources</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="lesson" id="lesson-content">
+      <header class="lesson-hero">
+        <p class="eyebrow">Lesson 0001 · Week 01 · Agent Runtime</p>
+        <h1>让工具结果<br>回到模型</h1>
+        <p class="lesson-hero__lede">
+          你将为 Web Creation Agent Workbench 写出第一条真正的因果链：
+          模型请求读取项目 Brief，应用执行只读工具，把结果精确回填给同一次调用，
+          模型再给出最终回答。
+        </p>
+        <dl class="lesson-meta">
+          <div>
+            <dt>Timebox</dt>
+            <dd>90 分钟实现 + 15 分钟讲解</dd>
+          </div>
+          <div>
+            <dt>Deliverable</dt>
+            <dd>TypeScript CLI + 4 条 Vitest 路径</dd>
+          </div>
+          <div>
+            <dt>Boundary</dt>
+            <dd>无真实 API、无 UI、无文件写入</dd>
+          </div>
+        </dl>
+      </header>
+
+      <div class="lesson-layout">
+        <aside class="lesson-nav" aria-label="本课目录">
+          <p>本课路线</p>
+          <ol>
+            <li><a href="#win">定义成果</a></li>
+            <li><a href="#model">建立心智模型</a></li>
+            <li><a href="#contract">固定契约</a></li>
+            <li><a href="#build">实现纵切</a></li>
+            <li><a href="#verify">测试与演示</a></li>
+            <li><a href="#explain">闭卷解释</a></li>
+          </ol>
+        </aside>
+
+        <article class="lesson-content">
+          <section class="lesson-section" id="win">
+            <p class="eyebrow">01 · Outcome</p>
+            <h2>先定义“完成”</h2>
+            <p>
+              这一课不追求“连上一个模型”。你要证明的是：即使模型由确定性的测试替身提供，
+              Workbench 也能正确拥有循环、工具执行、结果关联与停止权。
+              这正好填补
+              <a href="../learning-records/0003-agent-loop-gap.md">Learning Record 0003</a>
+              记录的能力空白。
+            </p>
+
+            <div class="callout">
+              <strong>本课唯一纵切</strong>
+              <p>
+                输入“读取 demo-landing-page 的项目 Brief 并总结”，模型端口先返回
+                <code>read_project_brief</code> 调用；应用执行工具并回填结果；模型端口随后返回最终摘要。
+              </p>
+            </div>
+
+            <ul class="checklist">
+              <li><code>npm test</code> 通过四条关键路径。</li>
+              <li><code>npm run demo</code> 打印完整的 request → tool → output → final 链路。</li>
+              <li>你能不看代码解释 <code>call_id</code> 和最大轮次为何不可省略。</li>
+            </ul>
+          </section>
+
+          <section class="lesson-section" id="model">
+            <p class="eyebrow">02 · Knowledge</p>
+            <h2>Agent Loop 不是“模型自己执行工具”</h2>
+            <p>
+              官方 Function Calling 指南把工具调用描述为模型与应用之间的多步协作：
+              模型只产生结构化调用，真正的代码由应用执行，工具结果再进入下一次模型请求。
+              一次模型响应也可能继续请求更多工具，因此停止条件属于应用，而不属于模型。
+            </p>
+
+            <ol class="flow" aria-label="最小工具调用流程">
+              <li>携带工具发起请求</li>
+              <li>收到函数调用</li>
+              <li>应用执行代码</li>
+              <li>回填工具结果</li>
+              <li>收到最终回答</li>
+            </ol>
+
+            <p>
+              Responses API 使用带类型的 Item。工具请求是
+              <code>function_call</code>，工具结果是
+              <code>function_call_output</code>；后者必须用
+              <code>call_id</code> 指向它正在回答的那一次调用。
+            </p>
+
+            <p>
+              <strong>一手资料：</strong>
+              阅读 OpenAI 的
+              <a
+                href="https://developers.openai.com/api/docs/guides/function-calling#the-tool-calling-flow"
+                rel="noreferrer"
+              >The tool calling flow</a>；
+              需要核对 Item 映射时再看
+              <a
+                href="https://developers.openai.com/api/docs/guides/migrate-to-responses#2-map-messages-to-items"
+                rel="noreferrer"
+              >Map Messages to Items</a>。
+              先只读这两个小节，不扩展到 streaming。
+            </p>
+          </section>
+
+          <section class="lesson-section" id="contract">
+            <p class="eyebrow">03 · Design</p>
+            <h2>先固定边界，再写循环</h2>
+            <p>
+              不要让核心循环直接依赖真实 SDK。定义一个很窄的
+              <code>ModelPort</code>，测试时注入脚本化模型；下一课接入 Profile 时，
+              只需实现新的 adapter，不必重写 orchestration。
+            </p>
+
+            <pre><code>type InputItem =
+  | { type: "user"; content: string }
+  | FunctionCall
+  | { type: "function_call_output"; callId: string; output: string };
+
+type FunctionCall = {
+  type: "function_call";
+  callId: string;
+  name: "read_project_brief";
+  arguments: string;
+};
+
+type OutputItem =
+  | FunctionCall
+  | { type: "message"; text: string };
+
+interface ModelPort {
+  respond(input: InputItem[]): Promise&lt;{ output: OutputItem[] }&gt;;
+}</code></pre>
+
+            <p>
+              这里故意使用项目自己的最小类型，而不是复制完整 OpenAI SDK 类型。
+              但保留 <code>function_call</code>、<code>function_call_output</code> 和
+              <code>callId</code> 这些协议语义，避免测试一个与真实 API 无关的假循环。
+            </p>
+
+            <h3>工具契约</h3>
+            <p>
+              唯一工具 <code>read_project_brief</code> 接受
+              <code>{"briefId":"demo-landing-page"}</code>。它只读取代码内的固定 fixture，
+              返回版本、目标受众与页面目标；不访问网络、不写文件。
+            </p>
+
+            <div class="callout">
+              <strong>参数失败也是 observation</strong>
+              <p>
+                JSON 无法解析或 <code>briefId</code> 不合法时，不让整个进程崩溃。
+                生成结构化失败的 <code>function_call_output</code> 回给模型，
+                让下一次响应有机会解释或纠正；达到最大轮次时则由应用强制停止。
+              </p>
+            </div>
+          </section>
+
+          <section class="lesson-section" id="build">
+            <p class="eyebrow">04 · Practice</p>
+            <h2>在主作品里完成它</h2>
+            <p>
+              所有实现都放在
+              <code>projects/web-creation-agent-workbench/</code>。
+              使用最小 npm + TypeScript + Vitest 配置，不创建 React 应用，也不安装 OpenAI SDK。
+            </p>
+
+            <ul class="file-map">
+              <li><code>src/agent-loop.ts</code>循环、终止条件与公开类型</li>
+              <li><code>src/read-project-brief.ts</code>参数解析和只读工具</li>
+              <li><code>src/scripted-model.ts</code>确定性的 ModelPort 测试替身</li>
+              <li><code>src/demo.ts</code>打印一次完整运行</li>
+              <li><code>test/agent-loop.test.ts</code>四条行为测试</li>
+            </ul>
+
+            <ol class="steps">
+              <li>
+                <span>
+                  初始化 TypeScript 项目，让 <code>npm test</code> 运行 Vitest，
+                  让 <code>npm run demo</code> 通过 <code>tsx</code> 执行 CLI。
+                </span>
+              </li>
+              <li>
+                <span>
+                  先写“模型直接回答”的测试与最小实现。此时循环只能调用模型一次并返回 message。
+                </span>
+              </li>
+              <li>
+                <span>
+                  再写“模型调用工具”的测试。第二次传给模型的 input 必须同时包含原输入、
+                  原 <code>function_call</code> 和匹配 <code>callId</code> 的输出。
+                </span>
+              </li>
+              <li>
+                <span>
+                  增加参数失败路径。断言工具没有被错误执行，同时失败 observation 被回填。
+                </span>
+              </li>
+              <li>
+                <span>
+                  最后加入 <code>maxTurns</code>。让脚本化模型永远请求工具，
+                  断言循环以明确错误停止，而不是挂起。
+                </span>
+              </li>
+            </ol>
+
+            <div class="checkpoint">
+              <h3>实现约束</h3>
+              <p>
+                一个 <code>for</code> 循环、一个工具分派点、一个最大轮次检查就够了。
+                不要提前创建通用工具注册框架、事件总线、Session、SSE、React UI 或真实 provider。
+              </p>
+            </div>
+          </section>
+
+          <section class="lesson-section" id="verify">
+            <p class="eyebrow">05 · Feedback loop</p>
+            <h2>让失败路径证明设计</h2>
+            <p>
+              测试行为，不测试私有函数。脚本化模型应记录每次收到的 input，
+              这样测试能直接观察工具结果是否被正确关联并回填。
+            </p>
+
+            <table class="test-table">
+              <thead>
+                <tr>
+                  <th>路径</th>
+                  <th>安排</th>
+                  <th>关键断言</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>工具成功</td>
+                  <td>call → final</td>
+                  <td>执行一次；输出沿用原 callId；最终文字返回</td>
+                </tr>
+                <tr>
+                  <td>参数失败</td>
+                  <td>bad call → final</td>
+                  <td>不崩溃；回填结构化 error observation</td>
+                </tr>
+                <tr>
+                  <td>无需工具</td>
+                  <td>final</td>
+                  <td>只请求模型一次；工具执行次数为零</td>
+                </tr>
+                <tr>
+                  <td>超过轮次</td>
+                  <td>call → call → …</td>
+                  <td>在 maxTurns 后抛出可识别的限制错误</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <pre><code>cd projects/web-creation-agent-workbench
+npm test
+npm run demo</code></pre>
+
+            <p>演示输出不必逐字相同，但必须让旁观者看见因果顺序：</p>
+
+            <pre><code>[request] 读取 demo-landing-page 的项目 Brief 并总结
+[function_call] read_project_brief · call_001
+[function_call_output] call_001 · {"version":"v1", ...}
+[final] 已读取 v1 Brief：为……创建响应式单页。</code></pre>
+
+            <p>
+              如果 demo 只能显示最终回答，纵切还不算“可演示”；
+              如果 demo 能跑但四条测试未通过，也还不能写入 Evidence。
+            </p>
+          </section>
+
+          <section class="lesson-section" id="explain">
+            <p class="eyebrow">06 · Retrieval</p>
+            <h2>合上代码，讲清因果链</h2>
+
+            <div class="checkpoint">
+              <h3>5 分钟闭卷挑战</h3>
+              <ol>
+                <li>画出五步工具调用流程，并标出哪两步属于应用。</li>
+                <li>解释为什么工具 output 必须带原调用的 <code>call_id</code>。</li>
+                <li>解释模型不断请求工具时，为什么应用必须拥有停止权。</li>
+                <li>回答：Agent 与一次普通 LLM 请求的本质区别是什么？</li>
+              </ol>
+            </div>
+
+            <details class="answer">
+              <summary>完成闭卷回答后，再展开核对</summary>
+              <p>
+                核心不是“多请求一次”，而是应用维护一个受控循环：
+                它把模型提出的动作映射到真实工具，执行并观察结果，再把观察与对应调用关联后继续推理；
+                同时由应用验证参数、限制权限并决定何时终止。
+              </p>
+            </details>
+
+            <h3>完成后的证据</h3>
+            <p>
+              保存测试终端输出与 demo transcript，但现在不要新建 Learning Record。
+              只有你完成实现、四条测试通过并能闭卷解释后，才让教师核验并记录成果。
+              本课完成前，不进入 Model Profile、真实 Token 或 streaming。
+            </p>
+
+            <div class="callout">
+              <strong>卡住时就问教师</strong>
+              <p>
+                把失败测试、你预期的 input items 和实际收到的 items 一起发给 Agent。
+                优先问“哪一段因果链不成立”，不要直接索取整份答案。
+              </p>
+            </div>
+
+            <p>
+              课程边界依据：
+              <a href="../MISSION.md">Mission</a>、
+              <a href="../docs/12-week-roadmap.md">Week 01 路线</a> 与
+              <a href="../docs/adr/0005-use-responses-api-with-custom-orchestration.md">ADR 0005</a>。
+            </p>
+          </section>
+        </article>
+      </div>
+    </main>
+
+    <footer class="lesson-footer">
+      <div class="lesson-footer__inner">
+        <p>Web Creation Agent Workbench · Repository-backed learning</p>
+        <p>下一课由验证后的学习证据决定，完成当前 Week 后再进入下一 Week。</p>
+      </div>
+    </footer>
+  </body>
+</html>

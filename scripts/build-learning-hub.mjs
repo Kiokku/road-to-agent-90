@@ -27,13 +27,12 @@ function parseRoadmap(markdown) {
   const matches = [...markdown.matchAll(/^## Week (\d{2}) · (.+)$/gm)];
   return matches.map((match, index) => {
     const sectionStart = match.index + match[0].length;
-    const sectionEnd = matches[index + 1]?.index ?? markdown.indexOf("## 每周固定节奏");
+    const sectionEnd = matches[index + 1]?.index ?? markdown.indexOf("## 每个 Week 的建议节奏");
     const section = markdown.slice(sectionStart, sectionEnd > sectionStart ? sectionEnd : undefined);
     const get = (key) => section.match(new RegExp(`^- ${key}: (.+)$`, "m"))?.[1].trim() ?? "";
     return {
       number: match[1],
       title: match[2].trim(),
-      dates: get("Dates"),
       outcome: get("Outcome"),
       build: get("Build"),
       verify: get("Verify"),
@@ -110,15 +109,6 @@ function parseResources(markdown) {
   return entries;
 }
 
-function formatDate(date) {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Shanghai",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(date);
-}
-
 const roadmap = parseRoadmap(read("docs/12-week-roadmap.md"));
 const records = parseRecords();
 const lessons = parseLessons();
@@ -132,10 +122,8 @@ const successItems = parseSection(mission, "Success looks like")
   .filter((line) => line.startsWith("- "))
   .map((line) => stripMarkdown(line.slice(2)));
 const verifiedEvidence = evidence.filter((item) => item.result === "verified");
-const today = formatDate(new Date());
-const current = roadmap.find((week) => today >= week.dates.slice(0, 10) && today <= week.dates.slice(-10))
-  ?? (today < roadmap[0].dates.slice(0, 10) ? roadmap[0] : roadmap.at(-1));
 const completedWeeks = new Set(verifiedEvidence.map((item) => item.file.match(/week-(\d{2})/i)?.[1]).filter(Boolean));
+const current = roadmap.find((week) => !completedWeeks.has(week.number)) ?? roadmap.at(-1);
 
 const weekRows = roadmap.map((week) => {
   const isCurrent = week.number === current.number;
@@ -144,7 +132,7 @@ const weekRows = roadmap.map((week) => {
     <details class="week-row" data-week="${week.number}" ${isCurrent ? "open" : ""}>
       <summary>
         <span class="week-index">${week.number}</span>
-        <span class="week-heading"><strong>${escapeHtml(week.title)}</strong><small>${escapeHtml(week.dates)}</small></span>
+        <span class="week-heading"><strong>${escapeHtml(week.title)}</strong><small>Sequential capability ${week.number} of ${roadmap.length}</small></span>
         <span class="week-status week-status--${status.toLowerCase()}">${status}</span>
         <span class="disclosure" aria-hidden="true"></span>
       </summary>
@@ -209,7 +197,7 @@ const html = `<!doctype html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A repository-backed learning hub for becoming a frontend Agent engineer in 12 weeks.">
+  <meta name="description" content="A repository-backed learning hub for becoming a frontend Agent engineer through 12 sequential Weeks.">
   <title>Agent Learning Hub · Road to Agent 90</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23a4492d'/%3E%3Cpath d='M18 45 30 16h5l12 29h-7l-3-8H27l-3 8Zm11-14h6l-3-8Z' fill='%23f3f0e9'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="assets/course.css">
@@ -234,12 +222,12 @@ const html = `<!doctype html>
 
   <main id="main">
     <section class="hero" id="top" aria-labelledby="hero-title">
-      <div class="eyebrow"><span>FIELD NOTES / 2026</span><span>Frontend → Agent</span></div>
+      <div class="eyebrow"><span>FIELD NOTES / SEQUENTIAL</span><span>Frontend → Agent</span></div>
       <div class="hero-grid">
         <div>
           <p class="kicker">A practical transformation, documented in public</p>
           <h1 id="hero-title">From Frontend<br>to Agent Engineer</h1>
-          <p class="commitment">12 weeks <i>·</i> 120 hours <i>·</i> one Web Creation Agent</p>
+          <p class="commitment">12 Weeks <i>·</i> 12 verified slices <i>·</i> one Web Creation Agent</p>
         </div>
         <div class="mission-copy">
           <p>${escapeHtml(why)}</p>
@@ -284,7 +272,7 @@ const html = `<!doctype html>
       <div class="evidence-grid">
         <div>
           <div class="subheading"><span>Lessons</span><small>Interactive teaching artifacts</small></div>
-          ${lessonRows}
+          ${lessonRows.trimStart()}
           <div class="subheading subheading--spaced"><span>Weekly evidence</span><small>Build · Test · Demo · Explain</small></div>
           ${evidenceRows}
         </div>
@@ -329,7 +317,7 @@ const html = `<!doctype html>
 
   <footer>
     <a class="brand" href="#top"><span>AGENT</span><i>/</i><span>LEARNING HUB</span></a>
-    <p>2026-07-20 — 2026-10-11<br>Built from repository evidence · Generated ${today}</p>
+    <p>Week 01 → Week 12<br>Built from repository evidence</p>
     <a href="docs/agent-learning-hub.md">How this Hub works ↗</a>
   </footer>
 </body>

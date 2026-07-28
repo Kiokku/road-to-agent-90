@@ -1,7 +1,7 @@
 # Mission: 前端到全栈 Agent 应用开发
 
 ## Why
-在 12 周内达到前端 Agent / AI 应用开发岗位的面试要求，并以此作为长期转型全栈 Agent 应用工程师的第一阶段。
+完成 12 个按顺序推进的 Week 后，达到前端 Agent / AI 应用开发岗位的面试要求，并以此作为长期转型全栈 Agent 应用工程师的第一阶段。
 
 ## Success looks like
 - 完成并部署一个主作品 Web Creation Agent Workbench。
@@ -10,11 +10,12 @@
 - 短期目标达成后，继续补齐全栈 Agent 应用开发能力。
 
 ## Constraints
-- 短期阶段为 12 周：2026 年 7 月 20 日至 10 月 11 日。
-- 每周可稳定投入约 10 小时，短期总预算约 120 小时。
+- 短期阶段包含 Week 01 至 Week 12，严格按顺序推进，不绑定具体日期。
+- 每个 Week 预计投入约 10 小时，短期总预算约 120 小时。
 - 短期学习和产出必须直接服务于主作品或面试表现。
 - 所有编程 Lesson 围绕同一个 Web Creation Agent Workbench 持续演进，每课只增加一个可验证纵切。
-- 每周只承诺一个经过测试、能够演示和解释的纵切；课程节数和阅读量不作为完成标准。
+- 当前 Week 只有在 Build、Test、Demo、Explain 全部通过并留下 verified Evidence 后，才进入下一个 Week。
+- 每个 Week 只承诺一个经过测试、能够演示和解释的纵切；课程节数和阅读量不作为完成标准。
 - 模型层允许读取多个服务端 Model Profile，但 V1 验收只要求 Packy Terra Profile 完整通过 Responses API、streaming 与 function calling 能力检查。
 
 ## Out of scope
@@ -24,4 +25,4 @@
 - 视频输入、可视化批注、多模板市场、任意技术栈生成、完整全栈网站生成和多 Agent 并行建站。
 - 在浏览器输入 API Key、任意 Base URL 或任意模型名称，以及兼容不完整的通用多模型适配层。
 - 在短期阶段使用 Agents SDK 隐藏 Agent Loop 编排。
-- 在 12 周短期阶段并行学习 Python、FastAPI、LangGraph、复杂 RAG 或多 Agent 编排。
+- 在短期 12 个 Week 内并行学习 Python、FastAPI、LangGraph、复杂 RAG 或多 Agent 编排。

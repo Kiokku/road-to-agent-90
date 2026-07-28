@@ -5,7 +5,7 @@
 ## Language
 
 **短期达标**：
-在 12 周内完成并部署主作品，能解释关键取舍、通过相关模拟面试并开始投递目标岗位。
+按顺序完成 12 个 Week 并部署主作品，能解释关键取舍、通过相关模拟面试并开始投递目标岗位。
 _Avoid_: 学完全部课程、看完路线图
 
 **主作品**：
@@ -72,6 +72,10 @@ _Avoid_: 阅读时长、课程节数、手动勾选
 决定学习状态与进度的仓库文件和完成证据，包括 Mission、Lesson 与 Learning Record。
 _Avoid_: localStorage、页面勾选状态、未关联证据的进度 JSON
 
+**当前 Week**：
+Week 01 至 Week 12 中最早一个没有 verified Evidence 的 Week；完成当前 Week 后才进入下一个。
+_Avoid_: 按日期自动切换、跳过未验证 Week
+
 **Agent Learning Hub**：
 读取学习事实来源并呈现使命、路线、当前 Lesson、完成证据和复习状态的只读入口。
 _Avoid_: 任务管理器、独立进度数据库
@@ -81,5 +85,5 @@ _Avoid_: 任务管理器、独立进度数据库
 _Avoid_: 主作品源代码目录
 
 **主作品工作区**：
-`projects/web-creation-agent-workbench/` 中持续累积产品代码、测试与每周完成证据的实现区域。
+`projects/web-creation-agent-workbench/` 中持续累积产品代码、测试与每个 Week 完成证据的实现区域。
 _Avoid_: 独立教程仓库、零散 Demo 目录

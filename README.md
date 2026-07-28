@@ -1,11 +1,11 @@
 # Road to Agent 90
 
-这是一个面向自用的 Agent 开发教学工作区。短期使命是在 2026-07-20 至 2026-10-11 的 12 周内，用约 120 小时完成一个可演示、可解释、可部署的 **Web Creation Agent Workbench**，达到前端 AI / Agent 应用岗位的面试要求；长期再转向全栈 Agent 应用开发。
+这是一个面向自用的 Agent 开发教学工作区。短期使命是按顺序完成 12 个 Week，用约 120 小时构建一个可演示、可解释、可部署的 **Web Creation Agent Workbench**，达到前端 AI / Agent 应用岗位的面试要求；长期再转向全栈 Agent 应用开发。
 
 ## 从这里开始
 
 1. 阅读 [MISSION.md](./MISSION.md)，确认学习目标和边界。
-2. 阅读 [12 周纵切路线](./docs/12-week-roadmap.md)，只处理当前周。
+2. 阅读 [12 个 Week 纵切路线](./docs/12-week-roadmap.md)，只处理最早一个没有 verified Evidence 的 Week。
 3. 打开 [Agent Learning Hub](./learning-hub.html)，查看下一步和真实学习证据。
 4. 使用 `teach` 开始下一课：
 
@@ -24,7 +24,7 @@
 ├── lessons/                   teach 生成的单课 HTML（按需创建）
 ├── learning-records/          已验证的先验与学习记录
 ├── reference/                 可复用参考页（按需创建）
-├── evidence/                  每周完成证据（按需创建）
+├── evidence/                  每个 Week 的完成证据（按需创建）
 ├── projects/
 │   └── web-creation-agent-workbench/  主作品（按纵切创建）
 └── learning-hub.html          只读学习入口
@@ -46,8 +46,8 @@ python3 -m http.server 4173
 
 ## 核心学习原则
 
-- 每周只完成一个纵切，不按课程节数验收。
-- 工作日约 4 小时用于可信资料、检索练习和小实验；周末约 6 小时用于集成、测试和演示。
-- 每周结束进行 5 分钟闭卷讲解；第 8 周开始正式模拟面试。
+- 每个 Week 只完成一个纵切，不按课程节数验收。
+- 每个 Week 可用约 4 小时完成可信资料、检索练习和小实验，再用约 6 小时完成集成、测试和演示。
+- 每个 Week 结束进行 5 分钟闭卷讲解；Week 08 开始正式模拟面试。
 - React/TypeScript 是已有能力，不重复学习通用前端基础。
 - 短期不并行学习 Python、FastAPI、LangGraph、复杂 RAG 或多 Agent。
