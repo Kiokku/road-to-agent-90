@@ -40,7 +40,7 @@ npm run hub:check
 python3 -m http.server 4173
 ```
 
-访问 `http://localhost:4173/learning-hub.html`；若端口已被占用，可换成 `python3 -m http.server 4174` 并访问对应端口。旧的 `progress-dashboard.html` 暂时保留，只作为回退版本。
+访问 `http://localhost:4173/learning-hub.html`；若端口已被占用，可换成 `python3 -m http.server 4174` 并访问对应端口。
 
 公开页面：<https://kiokku.github.io/road-to-agent-90/>
 

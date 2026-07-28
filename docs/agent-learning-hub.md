@@ -21,8 +21,7 @@ Hub 读取仓库中的 Mission、Lesson、Learning Record、Glossary 与完成�
 
 - Hub 是学习证据入口，不是 Kanban 任务管理器。
 - Hub 借鉴 AI Engineering from Scratch 的 Curriculum、Roadmap、Glossary 与进度结构，但围绕一个主作品的证据链组织内容。
-- 新建 `learning-hub.html` 作为正式入口。
-- 暂时保留现有 `progress-dashboard.html` 及其资源，直到新 Hub 验证完成后再决定是否删除。
+- `learning-hub.html` 是唯一的正式学习入口。
 
 ## Generation
 
