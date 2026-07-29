@@ -10,3 +10,6 @@
 - 从 Week 01 开始顺序推进；当前 Week 由最早一个没有 verified Evidence 的 Week 决定，不按日期自动切换。
 - 学习事实、Lessons、Reference 与 Agent Learning Hub 位于仓库根目录；主作品实现与测试位于 `projects/web-creation-agent-workbench/`。
 - 面试训练从 Week 01 开始：每个 Week 完成纵切后进行 5 分钟闭卷讲解；Week 08 开始正式模拟面试；Week 11–12 集中打磨简历和完整项目演示。
+- 新概念的 Lesson 先用普通中文讲清参与者、数据如何流动和结束条件，再进入接口与代码。
+- Practice 的每一步都要给出目标、修改文件、操作提示、运行命令、预期结果和自检问题。
+- 面向学习者的正文优先使用自然中文；协议字段保留英文原名并解释含义，避免把课程设计术语或英文术语生硬直译进正文。

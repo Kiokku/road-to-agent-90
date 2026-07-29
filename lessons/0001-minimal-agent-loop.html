@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta
       name="description"
-      content="用 TypeScript 和可注入的模型端口，实现 Web Creation Agent Workbench 的第一个可测试、可演示、可解释纵切：最小 Agent Loop。"
+      content="逐步理解 Agent Loop，并用 TypeScript 为 Web Creation Agent Workbench 实现一个可测试、可演示、可解释的最小循环。"
     >
     <title>Lesson 0001 · 最小 Agent Loop</title>
     <link rel="stylesheet" href="../assets/course.css">
@@ -19,32 +19,31 @@
         <nav aria-label="课程相关资料">
           <a href="../MISSION.md">Mission</a>
           <a href="../docs/12-week-roadmap.md">12 Week 路线</a>
-          <a href="../RESOURCES.md">Resources</a>
+          <a href="../docs/ai-engineering-from-scratch-week-map.md">课程来源</a>
         </nav>
       </div>
     </header>
 
     <main class="lesson" id="lesson-content">
       <header class="lesson-hero">
-        <p class="eyebrow">Lesson 0001 · Week 01 · Agent Runtime</p>
-        <h1>让工具结果<br>回到模型</h1>
+        <p class="eyebrow">Lesson 0001 · Week 01 · Agent Loop</p>
+        <h1>让模型借助工具<br>完成一件事</h1>
         <p class="lesson-hero__lede">
-          你将为 Web Creation Agent Workbench 写出第一条真正的因果链：
-          模型请求读取项目 Brief，应用执行只读工具，把结果精确回填给同一次调用，
-          模型再给出最终回答。
+          模型不会亲自执行 TypeScript 函数。你要写的是中间那段应用程序：
+          接住模型的工具请求、执行一个只读工具、把结果交回模型，并在正确时刻结束。
         </p>
         <dl class="lesson-meta">
           <div>
-            <dt>Timebox</dt>
-            <dd>90 分钟实现 + 15 分钟讲解</dd>
+            <dt>预计用时</dt>
+            <dd>约 2 小时</dd>
           </div>
           <div>
-            <dt>Deliverable</dt>
-            <dd>TypeScript CLI + 4 条 Vitest 路径</dd>
+            <dt>本课成果</dt>
+            <dd>TypeScript CLI + 4 条测试</dd>
           </div>
           <div>
-            <dt>Boundary</dt>
-            <dd>无真实 API、无 UI、无文件写入</dd>
+            <dt>暂不涉及</dt>
+            <dd>真实 API、网页界面、文件写入</dd>
           </div>
         </dl>
       </header>
@@ -53,291 +52,1080 @@
         <aside class="lesson-nav" aria-label="本课目录">
           <p>本课路线</p>
           <ol>
-            <li><a href="#win">定义成果</a></li>
-            <li><a href="#model">建立心智模型</a></li>
-            <li><a href="#contract">固定契约</a></li>
-            <li><a href="#build">实现纵切</a></li>
+            <li><a href="#outcome">明确成果</a></li>
+            <li><a href="#sources">带着问题阅读</a></li>
+            <li><a href="#basics">先建立基础认识</a></li>
+            <li><a href="#flow">走完五个动作</a></li>
+            <li><a href="#protocol">看懂关键数据</a></li>
+            <li><a href="#practice">逐步实现</a></li>
             <li><a href="#verify">测试与演示</a></li>
             <li><a href="#explain">闭卷解释</a></li>
           </ol>
         </aside>
 
         <article class="lesson-content">
-          <section class="lesson-section" id="win">
+          <section class="lesson-section" id="outcome">
             <p class="eyebrow">01 · Outcome</p>
-            <h2>先定义“完成”</h2>
+            <h2>这节课只完成一条最小链路</h2>
             <p>
-              这一课不追求“连上一个模型”。你要证明的是：即使模型由确定性的测试替身提供，
-              Workbench 也能正确拥有循环、工具执行、结果关联与停止权。
-              这正好填补
+              用户要求读取项目说明。模型先返回
+              <code>read_project_brief</code> 工具请求；你的应用执行只读工具，
+              把结果交回同一次调用；模型得到资料后给出最终回答。
+            </p>
+
+            <div class="callout">
+              <strong>看得见的完成标准</strong>
+              <p>
+                在 <code>projects/web-creation-agent-workbench/</code> 中运行
+                <code>npm test</code>，四条关键路径通过；运行 <code>npm run demo</code>，
+                终端按顺序显示用户输入、模型请求、工具调用、工具结果和最终回答。
+              </p>
+            </div>
+
+            <p>
+              这正好对应
               <a href="../learning-records/0003-agent-loop-gap.md">Learning Record 0003</a>
-              记录的能力空白。
+              记录的能力空白。你已经会 React 和 TypeScript，因此本课不复习语言基础，
+              重点是第一次亲手控制 Agent 的数据流和结束规则。
             </p>
 
-            <div class="callout">
-              <strong>本课唯一纵切</strong>
-              <p>
-                输入“读取 demo-landing-page 的项目 Brief 并总结”，模型端口先返回
-                <code>read_project_brief</code> 调用；应用执行工具并回填结果；模型端口随后返回最终摘要。
-              </p>
-            </div>
-
-            <ul class="checklist">
-              <li><code>npm test</code> 通过四条关键路径。</li>
-              <li><code>npm run demo</code> 打印完整的 request → tool → output → final 链路。</li>
-              <li>你能不看代码解释 <code>call_id</code> 和最大轮次为何不可省略。</li>
-            </ul>
-          </section>
-
-          <section class="lesson-section" id="model">
-            <p class="eyebrow">02 · Knowledge</p>
-            <h2>Agent Loop 不是“模型自己执行工具”</h2>
+            <h3>为什么先不用真实模型？</h3>
             <p>
-              官方 Function Calling 指南把工具调用描述为模型与应用之间的多步协作：
-              模型只产生结构化调用，真正的代码由应用执行，工具结果再进入下一次模型请求。
-              一次模型响应也可能继续请求更多工具，因此停止条件属于应用，而不属于模型。
+              真实模型会带来网络、密钥、费用和输出变化。第一次写循环时，这些变量会让你难以判断：
+              问题来自循环，还是来自模型这次恰好换了一种回答。
             </p>
-
-            <ol class="flow" aria-label="最小工具调用流程">
-              <li>携带工具发起请求</li>
-              <li>收到函数调用</li>
-              <li>应用执行代码</li>
-              <li>回填工具结果</li>
-              <li>收到最终回答</li>
-            </ol>
-
             <p>
-              Responses API 使用带类型的 Item。工具请求是
-              <code>function_call</code>，工具结果是
-              <code>function_call_output</code>；后者必须用
-              <code>call_id</code> 指向它正在回答的那一次调用。
-            </p>
-
-            <p>
-              <strong>一手资料：</strong>
-              阅读 OpenAI 的
-              <a
-                href="https://developers.openai.com/api/docs/guides/function-calling#the-tool-calling-flow"
-                rel="noreferrer"
-              >The tool calling flow</a>；
-              需要核对 Item 映射时再看
-              <a
-                href="https://developers.openai.com/api/docs/guides/migrate-to-responses#2-map-messages-to-items"
-                rel="noreferrer"
-              >Map Messages to Items</a>。
-              先只读这两个小节，不扩展到 streaming。
+              所以本课使用<strong>可控假模型</strong>：提前写好第一轮和第二轮返回什么。
+              它不模拟智能，只让同一条测试每次得到相同结果。等循环通过测试后，
+              后续 Lesson 再把它替换为真实的 Responses-compatible Model Profile。
             </p>
           </section>
 
-          <section class="lesson-section" id="contract">
-            <p class="eyebrow">03 · Design</p>
-            <h2>先固定边界，再写循环</h2>
+          <section class="lesson-section" id="sources">
+            <p class="eyebrow">02 · Source Reading</p>
+            <h2>先读主课，但只读与本课有关的部分</h2>
             <p>
-              不要让核心循环直接依赖真实 SDK。定义一个很窄的
-              <code>ModelPort</code>，测试时注入脚本化模型；下一课接入 Profile 时，
-              只需实现新的 adapter，不必重写 orchestration。
-            </p>
-
-            <pre><code>type InputItem =
-  | { type: "user"; content: string }
-  | FunctionCall
-  | { type: "function_call_output"; callId: string; output: string };
-
-type FunctionCall = {
-  type: "function_call";
-  callId: string;
-  name: "read_project_brief";
-  arguments: string;
-};
-
-type OutputItem =
-  | FunctionCall
-  | { type: "message"; text: string };
-
-interface ModelPort {
-  respond(input: InputItem[]): Promise&lt;{ output: OutputItem[] }&gt;;
-}</code></pre>
-
-            <p>
-              这里故意使用项目自己的最小类型，而不是复制完整 OpenAI SDK 类型。
-              但保留 <code>function_call</code>、<code>function_call_output</code> 和
-              <code>callId</code> 这些协议语义，避免测试一个与真实 API 无关的假循环。
-            </p>
-
-            <h3>工具契约</h3>
-            <p>
-              唯一工具 <code>read_project_brief</code> 接受
-              <code>{"briefId":"demo-landing-page"}</code>。它只读取代码内的固定 fixture，
-              返回版本、目标受众与页面目标；不访问网络、不写文件。
-            </p>
-
-            <div class="callout">
-              <strong>参数失败也是 observation</strong>
-              <p>
-                JSON 无法解析或 <code>briefId</code> 不合法时，不让整个进程崩溃。
-                生成结构化失败的 <code>function_call_output</code> 回给模型，
-                让下一次响应有机会解释或纠正；达到最大轮次时则由应用强制停止。
-              </p>
-            </div>
-          </section>
-
-          <section class="lesson-section" id="build">
-            <p class="eyebrow">04 · Practice</p>
-            <h2>在主作品里完成它</h2>
-            <p>
-              所有实现都放在
-              <code>projects/web-creation-agent-workbench/</code>。
-              使用最小 npm + TypeScript + Vitest 配置，不创建 React 应用，也不安装 OpenAI SDK。
-            </p>
-
-            <ul class="file-map">
-              <li><code>src/agent-loop.ts</code>循环、终止条件与公开类型</li>
-              <li><code>src/read-project-brief.ts</code>参数解析和只读工具</li>
-              <li><code>src/scripted-model.ts</code>确定性的 ModelPort 测试替身</li>
-              <li><code>src/demo.ts</code>打印一次完整运行</li>
-              <li><code>test/agent-loop.test.ts</code>四条行为测试</li>
-            </ul>
-
-            <ol class="steps">
-              <li>
-                <span>
-                  初始化 TypeScript 项目，让 <code>npm test</code> 运行 Vitest，
-                  让 <code>npm run demo</code> 通过 <code>tsx</code> 执行 CLI。
-                </span>
-              </li>
-              <li>
-                <span>
-                  先写“模型直接回答”的测试与最小实现。此时循环只能调用模型一次并返回 message。
-                </span>
-              </li>
-              <li>
-                <span>
-                  再写“模型调用工具”的测试。第二次传给模型的 input 必须同时包含原输入、
-                  原 <code>function_call</code> 和匹配 <code>callId</code> 的输出。
-                </span>
-              </li>
-              <li>
-                <span>
-                  增加参数失败路径。断言工具没有被错误执行，同时失败 observation 被回填。
-                </span>
-              </li>
-              <li>
-                <span>
-                  最后加入 <code>maxTurns</code>。让脚本化模型永远请求工具，
-                  断言循环以明确错误停止，而不是挂起。
-                </span>
-              </li>
-            </ol>
-
-            <div class="checkpoint">
-              <h3>实现约束</h3>
-              <p>
-                一个 <code>for</code> 循环、一个工具分派点、一个最大轮次检查就够了。
-                不要提前创建通用工具注册框架、事件总线、Session、SSE、React UI 或真实 provider。
-              </p>
-            </div>
-          </section>
-
-          <section class="lesson-section" id="verify">
-            <p class="eyebrow">05 · Feedback loop</p>
-            <h2>让失败路径证明设计</h2>
-            <p>
-              测试行为，不测试私有函数。脚本化模型应记录每次收到的 input，
-              这样测试能直接观察工具结果是否被正确关联并回填。
+              不需要顺着外部仓库继续学习后面的 Phase。本课只使用下面四份材料，
+              阅读时带着右侧的问题找答案。
             </p>
 
             <table class="test-table">
               <thead>
                 <tr>
-                  <th>路径</th>
-                  <th>安排</th>
-                  <th>关键断言</th>
+                  <th>材料</th>
+                  <th>本课读取重点</th>
+                  <th>阅读问题</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>工具成功</td>
-                  <td>call → final</td>
-                  <td>执行一次；输出沿用原 callId；最终文字返回</td>
+                  <td>
+                    <a href="https://github.com/fancyboi999/ai-engineering-from-scratch-zh/blob/8fe867f055b810f6e39be9faff68db6137077f7a/phases/14-agent-engineering/01-the-agent-loop/docs/zh.md">
+                      主课：P14-L01 Agent 循环
+                    </a>
+                  </td>
+                  <td>“问题背景”“五大要素”“练习”</td>
+                  <td>为什么上下文会增长？为什么必须限制最大轮次？</td>
                 </tr>
                 <tr>
-                  <td>参数失败</td>
-                  <td>bad call → final</td>
-                  <td>不崩溃；回填结构化 error observation</td>
+                  <td>
+                    <a href="https://github.com/fancyboi999/ai-engineering-from-scratch-zh/blob/8fe867f055b810f6e39be9faff68db6137077f7a/phases/13-tools-and-protocols/01-the-tool-interface/docs/zh.md">
+                      补课：P13-L01 工具接口
+                    </a>
+                  </td>
+                  <td>“四步循环”“第三步 execute”“第四步 observe”</td>
+                  <td>哪些事情由模型决定，哪些事情必须由应用完成？</td>
                 </tr>
                 <tr>
-                  <td>无需工具</td>
-                  <td>final</td>
-                  <td>只请求模型一次；工具执行次数为零</td>
+                  <td>
+                    <a href="https://github.com/fancyboi999/ai-engineering-from-scratch-zh/blob/8fe867f055b810f6e39be9faff68db6137077f7a/phases/11-llm-engineering/09-function-calling/docs/zh.md">
+                      补课：P11-L09 Function Calling
+                    </a>
+                  </td>
+                  <td>“Function calling 循环”“错误处理”</td>
+                  <td>为什么参数错误也应该变成工具结果？</td>
                 </tr>
                 <tr>
-                  <td>超过轮次</td>
-                  <td>call → call → …</td>
-                  <td>在 maxTurns 后抛出可识别的限制错误</td>
+                  <td>
+                    <a href="https://developers.openai.com/api/docs/guides/function-calling#handling-function-calls">
+                      校准：OpenAI Function calling
+                    </a>
+                  </td>
+                  <td>“Handling function calls”</td>
+                  <td><code>function_call</code> 与 <code>function_call_output</code> 如何配对？</td>
                 </tr>
               </tbody>
             </table>
 
-            <pre><code>cd projects/web-creation-agent-workbench
-npm test
-npm run demo</code></pre>
+            <div class="callout">
+              <strong>资料发生冲突时怎么处理</strong>
+              <p>
+                外部中文课程负责解释原理；Responses API 的字段形状以 OpenAI 官方文档为准。
+                本课只采用当前实现真正需要的字段，不照搬旧接口或其他 Provider 的写法。
+              </p>
+            </div>
 
-            <p>演示输出不必逐字相同，但必须让旁观者看见因果顺序：</p>
+            <h3>把课程术语换成容易理解的话</h3>
+            <table class="test-table">
+              <thead>
+                <tr>
+                  <th>来源中的说法</th>
+                  <th>本课中的说法</th>
+                  <th>实际含义</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Agent Loop</td>
+                  <td>Agent 循环</td>
+                  <td>模型请求工具、应用返回结果，重复到任务结束。</td>
+                </tr>
+                <tr>
+                  <td>Host / Harness</td>
+                  <td>应用程序</td>
+                  <td>调用模型、执行工具并保存上下文的 TypeScript 代码。</td>
+                </tr>
+                <tr>
+                  <td>Observation</td>
+                  <td>工具结果</td>
+                  <td>应用把工具成功或失败的信息交回模型。</td>
+                </tr>
+                <tr>
+                  <td>Stop condition</td>
+                  <td>结束规则</td>
+                  <td>收到最终回答，或达到应用设置的最大轮次。</td>
+                </tr>
+                <tr>
+                  <td>Turn budget</td>
+                  <td>最大轮次</td>
+                  <td>循环最多请求模型多少次，用来阻止无限循环。</td>
+                </tr>
+                <tr>
+                  <td>Test double</td>
+                  <td>可控假模型</td>
+                  <td>测试中按预设顺序返回结果的对象。</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
 
-            <pre><code>[request] 读取 demo-landing-page 的项目 Brief 并总结
-[function_call] read_project_brief · call_001
-[function_call_output] call_001 · {"version":"v1", ...}
-[final] 已读取 v1 Brief：为……创建响应式单页。</code></pre>
+          <section class="lesson-section" id="basics">
+            <p class="eyebrow">03 · Basics</p>
+            <h2>Agent 不是“更会聊天的模型”</h2>
+            <p>
+              一次普通模型请求是：应用发送内容，模型返回文字。Agent 多了一条能力：
+              当模型缺少资料或需要执行动作时，它可以先返回一份结构化工具请求。
+              应用执行工具，再把结果放进下一次模型请求。
+            </p>
+
+            <table class="test-table">
+              <thead>
+                <tr>
+                  <th>问题</th>
+                  <th>普通模型请求</th>
+                  <th>Agent 循环</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>模型返回什么？</td>
+                  <td>通常直接返回文字。</td>
+                  <td>可能返回文字，也可能请求工具。</td>
+                </tr>
+                <tr>
+                  <td>应用做什么？</td>
+                  <td>发送一次请求并显示回答。</td>
+                  <td>执行工具、保存结果，再次请求模型。</td>
+                </tr>
+                <tr>
+                  <td>何时结束？</td>
+                  <td>一次响应完成后结束。</td>
+                  <td>最终回答出现，或触发应用的结束规则。</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>先分清四个参与者</h3>
+            <table class="test-table">
+              <thead>
+                <tr>
+                  <th>参与者</th>
+                  <th>负责什么</th>
+                  <th>不负责什么</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>用户</td>
+                  <td>提出目标：“读取项目说明并总结。”</td>
+                  <td>不需要指定代码如何执行。</td>
+                </tr>
+                <tr>
+                  <td>模型</td>
+                  <td>决定直接回答，还是请求某个已开放工具。</td>
+                  <td>不亲自运行本地 TypeScript 函数。</td>
+                </tr>
+                <tr>
+                  <td>应用程序</td>
+                  <td>调用模型、检查请求、执行工具、保存上下文、决定何时结束。</td>
+                  <td>不允许模型绕过工具清单执行任意代码。</td>
+                </tr>
+                <tr>
+                  <td>工具</td>
+                  <td>接收明确参数并完成一个小操作。</td>
+                  <td>不决定下一步是否继续调用模型。</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="callout">
+              <strong>最重要的一句话</strong>
+              <p>
+                模型只提出工具请求；真正执行工具的是你的应用程序。
+              </p>
+            </div>
+
+            <h3>一个可靠的最小循环需要五样东西</h3>
+            <ol class="steps">
+              <li>
+                <span>
+                  <strong>会增长的上下文。</strong>
+                  第二轮不只发送工具结果，还要保留用户输入和第一轮工具请求。
+                </span>
+              </li>
+              <li>
+                <span>
+                  <strong>工具清单。</strong>
+                  模型只能请求应用明确开放的工具，应用按名称找到对应函数。
+                </span>
+              </li>
+              <li>
+                <span>
+                  <strong>参数检查。</strong>
+                  <code>arguments</code> 来自模型，执行前必须解析并验证。
+                </span>
+              </li>
+              <li>
+                <span>
+                  <strong>清楚的结束规则。</strong>
+                  没有工具请求且已有最终回答时，循环结束。
+                </span>
+              </li>
+              <li>
+                <span>
+                  <strong>最大轮次。</strong>
+                  如果模型一直请求工具，应用必须主动结束运行。
+                </span>
+              </li>
+            </ol>
+          </section>
+
+          <section class="lesson-section" id="flow">
+            <p class="eyebrow">04 · Walkthrough</p>
+            <h2>用一个任务走完五个动作</h2>
+            <p>用户输入：</p>
+            <pre><code>读取 demo-landing-page 的项目说明，并告诉我它为谁服务、要达成什么目标。</code></pre>
+
+            <ol class="flow" aria-label="最小工具调用流程">
+              <li>应用发送用户目标和工具清单</li>
+              <li>模型返回工具请求</li>
+              <li>应用检查参数并执行工具</li>
+              <li>应用交回工具结果</li>
+              <li>模型返回最终回答</li>
+            </ol>
+
+            <h3>动作 1：应用把目标和工具清单发给模型</h3>
+            <p>
+              工具清单告诉模型：你可以请求 <code>read_project_brief</code>，
+              它只接受一个字符串参数 <code>briefId</code>。此时工具还没有运行。
+            </p>
+
+            <h3>动作 2：模型提出工具请求</h3>
+            <pre><code>{
+  "type": "function_call",
+  "call_id": "call_001",
+  "name": "read_project_brief",
+  "arguments": "{\"briefId\":\"demo-landing-page\"}"
+}</code></pre>
+            <p>
+              这不是最终答案。它的意思是：“应用，请用这些参数执行这个工具。”
+            </p>
+
+            <h3>动作 3：应用检查参数并执行工具</h3>
+            <p>
+              应用先把 <code>arguments</code> 从 JSON 字符串解析成对象，
+              确认 <code>briefId</code> 是字符串，然后调用本地函数。
+            </p>
+            <pre><code>{
+  "ok": true,
+  "data": {
+    "version": "v1",
+    "audience": "独立开发者",
+    "goal": "收集候补名单"
+  }
+}</code></pre>
+
+            <h3>动作 4：应用把结果交回同一次调用</h3>
+            <pre><code>{
+  "type": "function_call_output",
+  "call_id": "call_001",
+  "output": "{\"ok\":true,\"data\":{\"version\":\"v1\",\"audience\":\"独立开发者\",\"goal\":\"收集候补名单\"}}"
+}</code></pre>
+            <p>
+              <code>call_id</code> 必须保持为 <code>call_001</code>。
+              它相当于取件号：模型可以知道这份结果属于哪一次工具请求。
+            </p>
+
+            <h3>动作 5：模型根据真实资料回答</h3>
+            <pre><code>这个落地页服务于独立开发者，目标是收集候补名单。</code></pre>
+            <p>
+              第二轮没有新的工具请求，并且已有最终文字，所以应用结束循环并把回答交给用户。
+            </p>
+
+            <div class="checkpoint">
+              <h3>先别看上文，口头复述</h3>
+              <p>
+                从用户输入开始，用五句话说完这条链路。每句话的主语必须明确：
+                是用户、模型、应用，还是工具？
+              </p>
+            </div>
+          </section>
+
+          <section class="lesson-section" id="protocol">
+            <p class="eyebrow">05 · Protocol</p>
+            <h2>只记住本课真正会用到的字段</h2>
+            <table class="test-table">
+              <thead>
+                <tr>
+                  <th>字段</th>
+                  <th>谁产生</th>
+                  <th>用途</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>type: "function_call"</code></td>
+                  <td>模型</td>
+                  <td>说明这条输出是工具请求，不是最终文字。</td>
+                </tr>
+                <tr>
+                  <td><code>name</code></td>
+                  <td>模型</td>
+                  <td>应用用它在工具清单中找到对应函数。</td>
+                </tr>
+                <tr>
+                  <td><code>arguments</code></td>
+                  <td>模型</td>
+                  <td>JSON 字符串；应用解析并检查后才能执行。</td>
+                </tr>
+                <tr>
+                  <td><code>call_id</code></td>
+                  <td>模型</td>
+                  <td>把一次请求与稍后返回的结果配对。</td>
+                </tr>
+                <tr>
+                  <td><code>type: "function_call_output"</code></td>
+                  <td>应用</td>
+                  <td>把工具的成功或失败信息放进下一次模型请求。</td>
+                </tr>
+                <tr>
+                  <td><code>output</code></td>
+                  <td>应用</td>
+                  <td>通常是字符串；本课使用 JSON 字符串。</td>
+                </tr>
+              </tbody>
+            </table>
 
             <p>
-              如果 demo 只能显示最终回答，纵切还不算“可演示”；
-              如果 demo 能跑但四条测试未通过，也还不能写入 Evidence。
+              OpenAI 官方文档说明，<code>response.output</code> 可能含有零个、一个或多个
+              <code>function_call</code>；每条调用包含 <code>call_id</code>、
+              <code>name</code> 和 JSON 编码的 <code>arguments</code>。应用执行后，
+              以同一个 <code>call_id</code> 返回 <code>function_call_output</code>。
+              详见
+              <a href="https://developers.openai.com/api/docs/guides/function-calling#handling-function-calls">
+                Handling function calls
+              </a>。
+            </p>
+
+            <div class="callout">
+              <strong>本课有意缩小协议范围</strong>
+              <p>
+                真实 Responses 输出还可能包含 message、reasoning 等其他项目。
+                本课的 <code>ModelClient</code> 只暴露循环需要的
+                <code>function_call</code> 和 <code>output_text</code>。
+                后续接入真实 Provider 时，再由适配层处理完整响应。
+              </p>
+            </div>
+
+            <h3>参数错误为什么不直接让程序崩溃？</h3>
+            <p>
+              “参数不是合法 JSON”或“缺少 briefId”是模型可以理解并修正的信息。
+              应用把它包装成结构化工具结果，模型下一轮就能解释失败或重新请求；
+              如果直接抛出未处理异常，整次运行会在模型得到反馈之前中断。
+            </p>
+          </section>
+
+          <section class="lesson-section" id="practice">
+            <p class="eyebrow">06 · Practice</p>
+            <h2>现在亲手写出循环</h2>
+            <p>
+              从仓库根目录开始。每一步都先完成“操作”，再运行命令检查；
+              如果实际结果与“预期”不同，就停在当前步骤排查，不要继续复制后面的代码。
+            </p>
+
+            <h3>Step 1 · 建立最小 TypeScript 项目</h3>
+            <p><strong>目标：</strong>得到能运行类型检查、Vitest 和终端演示的空项目。</p>
+            <p><strong>修改位置：</strong><code>projects/web-creation-agent-workbench/</code></p>
+            <p><strong>操作：</strong>在仓库根目录依次运行：</p>
+            <pre><code>cd projects/web-creation-agent-workbench
+npm init -y
+npm install -D typescript tsx vitest @types/node
+npm pkg set type=module
+npm pkg set scripts.check="tsc --noEmit"
+npm pkg set scripts.test="vitest run"
+npm pkg set scripts.demo="tsx src/demo.ts"
+mkdir -p src test</code></pre>
+
+            <p><strong>新建文件：</strong><code>tsconfig.json</code></p>
+            <pre><code>{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["src", "test"]
+}</code></pre>
+
+            <p><strong>运行：</strong><code>npm run</code></p>
+            <p>
+              <strong>预期：</strong>命令列出
+              <code>check</code>、<code>test</code> 和 <code>demo</code> 后继续。
+            </p>
+            <div class="checkpoint">
+              <h3>自检 1</h3>
+              <p>
+                为什么本课把项目放在主作品目录，而不是另建一个
+                <code>agent-loop-demo</code>？
+              </p>
+            </div>
+
+            <h3>Step 2 · 定义循环中会流动的数据</h3>
+            <p>
+              <strong>目标：</strong>让 TypeScript 能区分用户输入、工具请求、工具结果和模型响应。
+            </p>
+            <p><strong>新建文件：</strong><code>src/protocol.ts</code></p>
+            <pre><code>export type UserInput = {
+  role: "user";
+  content: string;
+};
+
+export type FunctionCall = {
+  type: "function_call";
+  call_id: string;
+  name: string;
+  arguments: string;
+};
+
+export type FunctionCallOutput = {
+  type: "function_call_output";
+  call_id: string;
+  output: string;
+};
+
+export type InputItem =
+  | UserInput
+  | FunctionCall
+  | FunctionCallOutput;
+
+export type FunctionToolDefinition = {
+  type: "function";
+  name: string;
+  description: string;
+  parameters: Record&lt;string, unknown&gt;;
+  strict: true;
+};
+
+export type ModelResponse = {
+  output: FunctionCall[];
+  output_text: string;
+};
+
+export interface ModelClient {
+  respond(
+    input: readonly InputItem[],
+    tools: readonly FunctionToolDefinition[],
+  ): Promise&lt;ModelResponse&gt;;
+}</code></pre>
+
+            <p><strong>运行：</strong><code>npm run check</code></p>
+            <p><strong>预期：</strong>命令安静结束，退出码为 0。</p>
+            <div class="checkpoint">
+              <h3>自检 2</h3>
+              <p>
+                指着 <code>FunctionCall</code> 说出：哪个字段选择工具？
+                哪个字段要解析？哪个字段负责配对结果？
+              </p>
+            </div>
+
+            <h3>Step 3 · 建立一个只读工具和工具清单</h3>
+            <p>
+              <strong>目标：</strong>只允许模型读取一份固定项目说明；
+              参数错误变成清楚的 JSON 结果。
+            </p>
+            <p><strong>新建文件：</strong><code>src/tools.ts</code></p>
+            <pre><code>import type {
+  FunctionCall,
+  FunctionToolDefinition,
+} from "./protocol.js";
+
+type Tool = {
+  definition: FunctionToolDefinition;
+  execute: (argumentsJson: string) =&gt; string;
+};
+
+function isRecord(value: unknown): value is Record&lt;string, unknown&gt; {
+  return typeof value === "object" &amp;&amp; value !== null;
+}
+
+const readProjectBrief: Tool = {
+  definition: {
+    type: "function",
+    name: "read_project_brief",
+    description: "读取一份已存在的项目说明；不会修改任何文件。",
+    parameters: {
+      type: "object",
+      properties: {
+        briefId: { type: "string" },
+      },
+      required: ["briefId"],
+      additionalProperties: false,
+    },
+    strict: true,
+  },
+  execute(argumentsJson) {
+    let parsed: unknown;
+
+    try {
+      parsed = JSON.parse(argumentsJson);
+    } catch {
+      return JSON.stringify({
+        ok: false,
+        error: {
+          code: "INVALID_JSON",
+          message: "工具参数不是合法 JSON",
+        },
+      });
+    }
+
+    if (!isRecord(parsed) || typeof parsed.briefId !== "string") {
+      return JSON.stringify({
+        ok: false,
+        error: {
+          code: "INVALID_ARGUMENTS",
+          message: "briefId 必须是字符串",
+        },
+      });
+    }
+
+    if (parsed.briefId !== "demo-landing-page") {
+      return JSON.stringify({
+        ok: false,
+        error: {
+          code: "BRIEF_NOT_FOUND",
+          message: `找不到项目说明：${parsed.briefId}`,
+        },
+      });
+    }
+
+    return JSON.stringify({
+      ok: true,
+      data: {
+        version: "v1",
+        audience: "独立开发者",
+        goal: "收集候补名单",
+      },
+    });
+  },
+};
+
+const toolRegistry: Record&lt;string, Tool&gt; = {
+  [readProjectBrief.definition.name]: readProjectBrief,
+};
+
+export const toolDefinitions = Object.values(toolRegistry).map(
+  (tool) =&gt; tool.definition,
+);
+
+export function executeTool(call: FunctionCall): string {
+  const tool = toolRegistry[call.name];
+
+  if (!tool) {
+    return JSON.stringify({
+      ok: false,
+      error: {
+        code: "UNKNOWN_TOOL",
+        message: `未开放工具：${call.name}`,
+      },
+    });
+  }
+
+  return tool.execute(call.arguments);
+}</code></pre>
+
+            <p><strong>运行：</strong><code>npm run check</code></p>
+            <p><strong>预期：</strong>0 个类型错误。</p>
+            <div class="checkpoint">
+              <h3>自检 3</h3>
+              <p>
+                <code>toolRegistry</code> 为什么比
+                <code>globalThis[call.name]()</code> 安全？模型能否请求清单以外的函数？
+              </p>
+            </div>
+
+            <h3>Step 4 · 写一个按预设顺序回答的假模型</h3>
+            <p>
+              <strong>目标：</strong>让测试能安排“第一轮请求工具、第二轮最终回答”，
+              并检查模型每轮实际收到的上下文。
+            </p>
+            <p><strong>新建文件：</strong><code>src/fake-model.ts</code></p>
+            <pre><code>import type {
+  FunctionToolDefinition,
+  InputItem,
+  ModelClient,
+  ModelResponse,
+} from "./protocol.js";
+
+export class FakeModel implements ModelClient {
+  readonly requests: Array&lt;{
+    input: InputItem[];
+    tools: FunctionToolDefinition[];
+  }&gt; = [];
+
+  private readonly responses: ModelResponse[];
+
+  constructor(responses: ModelResponse[]) {
+    this.responses = [...responses];
+  }
+
+  async respond(
+    input: readonly InputItem[],
+    tools: readonly FunctionToolDefinition[],
+  ): Promise&lt;ModelResponse&gt; {
+    this.requests.push({
+      input: [...input],
+      tools: [...tools],
+    });
+
+    const response = this.responses.shift();
+
+    if (!response) {
+      throw new Error("假模型没有下一条预设响应");
+    }
+
+    return response;
+  }
+}</code></pre>
+
+            <p><strong>运行：</strong><code>npm run check</code></p>
+            <p><strong>预期：</strong>0 个类型错误。</p>
+            <div class="checkpoint">
+              <h3>自检 4</h3>
+              <p>
+                为什么假模型要保存 <code>requests</code>？
+                如果只检查最终文字，能否证明工具结果确实进入了第二轮？
+              </p>
+            </div>
+
+            <h3>Step 5 · 先把循环写成流程骨架</h3>
+            <p>
+              <strong>目标：</strong>先自己把五个动作对应到代码位置，再查看完整实现。
+            </p>
+            <p><strong>新建文件：</strong><code>src/agent-loop.ts</code></p>
+            <p><strong>操作提示：</strong>先不要展开答案，按下面顺序写出自己的版本：</p>
+            <ol class="steps">
+              <li><span>建立 <code>input</code> 数组，先放入用户输入。</span></li>
+              <li><span>用 <code>for</code> 循环限制最多请求模型 <code>maxTurns</code> 次。</span></li>
+              <li><span>每轮把当前 <code>input</code> 和工具定义交给模型。</span></li>
+              <li><span>把模型返回的工具请求追加到 <code>input</code>。</span></li>
+              <li><span>没有工具请求时，检查并返回最终文字。</span></li>
+              <li><span>有工具请求时，执行工具并追加 <code>function_call_output</code>。</span></li>
+              <li><span>循环用尽后抛出包含最大轮次的错误。</span></li>
+            </ol>
+
+            <details class="answer">
+              <summary>自己尝试后，展开参考实现</summary>
+              <pre><code>import type {
+  FunctionCallOutput,
+  InputItem,
+  ModelClient,
+} from "./protocol.js";
+import {
+  executeTool,
+  toolDefinitions,
+} from "./tools.js";
+
+type RunAgentOptions = {
+  model: ModelClient;
+  userText: string;
+  maxTurns?: number;
+  onEvent?: (event: string) =&gt; void;
+};
+
+export async function runAgent({
+  model,
+  userText,
+  maxTurns = 4,
+  onEvent = () =&gt; {},
+}: RunAgentOptions): Promise&lt;string&gt; {
+  const input: InputItem[] = [
+    { role: "user", content: userText },
+  ];
+
+  onEvent(`[user] ${userText}`);
+
+  for (let turn = 1; turn &lt;= maxTurns; turn += 1) {
+    onEvent(`[model_request] turn=${turn}`);
+
+    const response = await model.respond(input, toolDefinitions);
+    input.push(...response.output);
+
+    if (response.output.length === 0) {
+      if (!response.output_text) {
+        throw new Error("模型既没有请求工具，也没有返回最终回答");
+      }
+
+      onEvent(`[final] ${response.output_text}`);
+      return response.output_text;
+    }
+
+    if (response.output.length &gt; 1) {
+      throw new Error("本课一次只处理一个工具请求");
+    }
+
+    const call = response.output[0];
+    onEvent(`[function_call] ${call.name} · ${call.call_id}`);
+
+    const output = executeTool(call);
+    const result: FunctionCallOutput = {
+      type: "function_call_output",
+      call_id: call.call_id,
+      output,
+    };
+
+    input.push(result);
+    onEvent(`[function_call_output] ${call.call_id} · ${output}`);
+  }
+
+  throw new Error(`超过最大轮次 ${maxTurns}，运行已结束`);
+}</code></pre>
+            </details>
+
+            <p><strong>运行：</strong><code>npm run check</code></p>
+            <p><strong>预期：</strong>0 个类型错误。</p>
+            <div class="checkpoint">
+              <h3>自检 5</h3>
+              <p>
+                在代码里指出两行：哪一行让上下文增长？
+                哪一行保证工具结果沿用原来的 <code>call_id</code>？
+              </p>
+            </div>
+
+            <h3>Step 6 · 用四条测试固定循环行为</h3>
+            <p>
+              <strong>目标：</strong>证明工具成功、参数错误、直接回答和达到最大轮次
+              四条路径都由应用正确处理。
+            </p>
+            <p><strong>新建文件：</strong><code>test/agent-loop.test.ts</code></p>
+            <pre><code>import { describe, expect, it } from "vitest";
+import { runAgent } from "../src/agent-loop.js";
+import { FakeModel } from "../src/fake-model.js";
+
+const toolCall = (
+  callId: string,
+  argumentsJson = '{"briefId":"demo-landing-page"}',
+) =&gt; ({
+  output: [
+    {
+      type: "function_call" as const,
+      call_id: callId,
+      name: "read_project_brief",
+      arguments: argumentsJson,
+    },
+  ],
+  output_text: "",
+});
+
+describe("runAgent", () =&gt; {
+  it("执行工具并把结果交回同一次调用", async () =&gt; {
+    const model = new FakeModel([
+      toolCall("call_001"),
+      {
+        output: [],
+        output_text: "服务于独立开发者，目标是收集候补名单。",
+      },
+    ]);
+
+    const answer = await runAgent({
+      model,
+      userText: "读取项目说明并总结",
+    });
+
+    expect(answer).toContain("独立开发者");
+    expect(model.requests).toHaveLength(2);
+
+    const result = model.requests[1].input.find(
+      (item) =&gt; item.type === "function_call_output",
+    );
+
+    expect(result).toMatchObject({
+      type: "function_call_output",
+      call_id: "call_001",
+    });
+  });
+
+  it("参数错误时把错误结果交回模型", async () =&gt; {
+    const model = new FakeModel([
+      toolCall("call_bad_args", "{}"),
+      {
+        output: [],
+        output_text: "缺少 briefId，无法读取项目说明。",
+      },
+    ]);
+
+    await runAgent({
+      model,
+      userText: "读取项目说明",
+    });
+
+    const result = model.requests[1].input.find(
+      (item) =&gt; item.type === "function_call_output",
+    );
+
+    if (result?.type !== "function_call_output") {
+      throw new Error("第二轮缺少工具结果");
+    }
+
+    expect(JSON.parse(result.output)).toMatchObject({
+      ok: false,
+      error: { code: "INVALID_ARGUMENTS" },
+    });
+  });
+
+  it("模型不请求工具时直接结束", async () =&gt; {
+    const model = new FakeModel([
+      {
+        output: [],
+        output_text: "你好，现在不需要读取项目说明。",
+      },
+    ]);
+
+    const answer = await runAgent({
+      model,
+      userText: "你好",
+    });
+
+    expect(answer).toBe("你好，现在不需要读取项目说明。");
+    expect(model.requests).toHaveLength(1);
+  });
+
+  it("达到最大轮次后结束", async () =&gt; {
+    const model = new FakeModel([
+      toolCall("call_001"),
+      toolCall("call_002"),
+    ]);
+
+    await expect(
+      runAgent({
+        model,
+        userText: "一直读取项目说明",
+        maxTurns: 2,
+      }),
+    ).rejects.toThrow("超过最大轮次 2");
+
+    expect(model.requests).toHaveLength(2);
+  });
+});</code></pre>
+
+            <p><strong>运行：</strong><code>npm test &amp;&amp; npm run check</code></p>
+            <p><strong>预期：</strong><code>4 passed</code>，随后类型检查安静结束。</p>
+            <div class="checkpoint">
+              <h3>自检 6</h3>
+              <p>
+                暂时把 <code>agent-loop.ts</code> 中结果的
+                <code>call_id</code> 改成 <code>"wrong-id"</code>。
+                哪条测试失败？确认后立即恢复代码。
+              </p>
+            </div>
+
+            <h3>Step 7 · 做出可以现场演示的终端输出</h3>
+            <p>
+              <strong>目标：</strong>让别人不用读代码，也能看见循环的因果顺序。
+            </p>
+            <p><strong>新建文件：</strong><code>src/demo.ts</code></p>
+            <pre><code>import { runAgent } from "./agent-loop.js";
+import { FakeModel } from "./fake-model.js";
+
+const model = new FakeModel([
+  {
+    output: [
+      {
+        type: "function_call",
+        call_id: "call_demo_001",
+        name: "read_project_brief",
+        arguments: '{"briefId":"demo-landing-page"}',
+      },
+    ],
+    output_text: "",
+  },
+  {
+    output: [],
+    output_text:
+      "这个落地页服务于独立开发者，目标是收集候补名单。",
+  },
+]);
+
+await runAgent({
+  model,
+  userText: "读取 demo-landing-page 的项目说明并总结",
+  onEvent: console.log,
+});</code></pre>
+
+            <p><strong>运行：</strong><code>npm run demo</code></p>
+            <p><strong>预期：</strong></p>
+            <pre><code>[user] 读取 demo-landing-page 的项目说明并总结
+[model_request] turn=1
+[function_call] read_project_brief · call_demo_001
+[function_call_output] call_demo_001 · {"ok":true,"data":{...}}
+[model_request] turn=2
+[final] 这个落地页服务于独立开发者，目标是收集候补名单。</code></pre>
+
+            <div class="callout">
+              <strong>到这里就停</strong>
+              <p>
+                不接真实 API，不增加第二个工具，也不做网页界面。
+                先确保四条测试、终端演示和口头解释全部通过。
+              </p>
+            </div>
+          </section>
+
+          <section class="lesson-section" id="verify">
+            <p class="eyebrow">07 · Verify</p>
+            <h2>按四种证据验收</h2>
+            <table class="test-table">
+              <thead>
+                <tr>
+                  <th>证据</th>
+                  <th>操作</th>
+                  <th>通过标准</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Build</td>
+                  <td><code>npm run check</code></td>
+                  <td>TypeScript 0 个错误。</td>
+                </tr>
+                <tr>
+                  <td>Test</td>
+                  <td><code>npm test</code></td>
+                  <td>四条测试全部通过。</td>
+                </tr>
+                <tr>
+                  <td>Demo</td>
+                  <td><code>npm run demo</code></td>
+                  <td>五个动作顺序清楚，两个 <code>call_id</code> 一致。</td>
+                </tr>
+                <tr>
+                  <td>Explain</td>
+                  <td>合上代码，画出参与者和数据流。</td>
+                  <td>能说明执行者、结果回填、结束规则和无限循环风险。</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>再做一次故障演示</h3>
+            <ol class="steps">
+              <li>
+                <span>
+                  把 <code>demo.ts</code> 中的 <code>arguments</code> 暂时改成
+                  <code>"{}"</code>。
+                </span>
+              </li>
+              <li>
+                <span>
+                  运行 <code>npm run demo</code>，指出
+                  <code>INVALID_ARGUMENTS</code> 如何进入工具结果。
+                </span>
+              </li>
+              <li>
+                <span>
+                  恢复正确参数，再运行 <code>npm test</code>，确认四条测试仍通过。
+                </span>
+              </li>
+            </ol>
+
+            <h3>保存学习证据</h3>
+            <ul class="checklist">
+              <li><code>npm test</code> 的四条通过结果。</li>
+              <li><code>npm run demo</code> 的完整终端输出。</li>
+              <li>参数错误演示中的结构化错误结果。</li>
+              <li>你手画的循环，以及 5 分钟讲解要点。</li>
+            </ul>
+            <p>
+              阅读完 Lesson 不算完成 Week 01。只有实现、测试、演示和解释都通过，
+              才新增 Learning Record 或 verified Evidence。
             </p>
           </section>
 
           <section class="lesson-section" id="explain">
-            <p class="eyebrow">06 · Retrieval</p>
-            <h2>合上代码，讲清因果链</h2>
-
-            <div class="checkpoint">
-              <h3>5 分钟闭卷挑战</h3>
-              <ol>
-                <li>画出五步工具调用流程，并标出哪两步属于应用。</li>
-                <li>解释为什么工具 output 必须带原调用的 <code>call_id</code>。</li>
-                <li>解释模型不断请求工具时，为什么应用必须拥有停止权。</li>
-                <li>回答：Agent 与一次普通 LLM 请求的本质区别是什么？</li>
-              </ol>
-            </div>
+            <p class="eyebrow">08 · Explain</p>
+            <h2>合上代码，回答六个问题</h2>
+            <ol class="steps">
+              <li>
+                <span>Agent 与一次普通模型请求的本质区别是什么？</span>
+              </li>
+              <li>
+                <span>模型请求工具后，谁真正执行 TypeScript 函数？</span>
+              </li>
+              <li>
+                <span>第二轮为什么要保留第一轮工具请求，而不只发送工具结果？</span>
+              </li>
+              <li>
+                <span><code>call_id</code> 解决了什么配对问题？</span>
+              </li>
+              <li>
+                <span>参数错误为什么应该作为工具结果交回模型？</span>
+              </li>
+              <li>
+                <span>最大轮次由谁设置？它避免了什么风险？</span>
+              </li>
+            </ol>
 
             <details class="answer">
-              <summary>完成闭卷回答后，再展开核对</summary>
+              <summary>先独立回答，再展开核对</summary>
               <p>
-                核心不是“多请求一次”，而是应用维护一个受控循环：
-                它把模型提出的动作映射到真实工具，执行并观察结果，再把观察与对应调用关联后继续推理；
-                同时由应用验证参数、限制权限并决定何时终止。
+                1. Agent 应用会在模型和工具之间重复传递请求与结果，直到完成或触发结束规则。
+                2. 应用程序执行函数，模型只提出结构化请求。
+                3. 模型需要完整上下文，才能知道结果来自什么请求以及用户原本要什么。
+                4. <code>call_id</code> 把一份工具结果与一次具体调用配对。
+                5. 清楚的错误结果让模型能够解释、修正或改用其他方案，也避免可预期输入错误直接中断运行。
+                6. 应用设置并执行最大轮次，防止模型不断请求工具形成无限循环。
               </p>
             </details>
 
-            <h3>完成后的证据</h3>
-            <p>
-              保存测试终端输出与 demo transcript，但现在不要新建 Learning Record。
-              只有你完成实现、四条测试通过并能闭卷解释后，才让教师核验并记录成果。
-              本课完成前，不进入 Model Profile、真实 Token 或 streaming。
-            </p>
-
             <div class="callout">
-              <strong>卡住时就问教师</strong>
+              <strong>遇到不清楚的地方就继续问</strong>
               <p>
-                把失败测试、你预期的 input items 和实际收到的 items 一起发给 Agent。
-                优先问“哪一段因果链不成立”，不要直接索取整份答案。
+                把具体代码、测试失败信息或无法复述的步骤发给教学 Agent。
+                不要靠背诵答案跳过理解，也不要在本课完成前进入后续 Week。
               </p>
             </div>
 
             <p>
-              课程边界依据：
-              <a href="../MISSION.md">Mission</a>、
-              <a href="../docs/12-week-roadmap.md">Week 01 路线</a> 与
-              <a href="../docs/adr/0005-use-responses-api-with-custom-orchestration.md">ADR 0005</a>。
+              完成并验证本课成果后，再根据 Week 01 尚未满足的证据决定下一步。
             </p>
           </section>
         </article>
@@ -346,8 +1134,8 @@ npm run demo</code></pre>
 
     <footer class="lesson-footer">
       <div class="lesson-footer__inner">
-        <p>Web Creation Agent Workbench · Repository-backed learning</p>
-        <p>下一课由验证后的学习证据决定，完成当前 Week 后再进入下一 Week。</p>
+        <p>Road to Agent 90 · Web Creation Agent Workbench</p>
+        <p><a href="../learning-hub.html">返回 Agent Learning Hub</a></p>
       </div>
     </footer>
   </body>

@@ -9,7 +9,7 @@
 3. 打开 [Agent Learning Hub](./learning-hub.html)，查看下一步和真实学习证据。
 4. 使用 `teach` 开始下一课：
 
-   > 请读取 MISSION.md、NOTES.md、docs/12-week-roadmap.md 和 learning-records，只生成当前最近发展区中的下一个纵切 Lesson。Lesson 必须为 projects/web-creation-agent-workbench 增加一个可测试、可演示、可解释的成果。
+   > 请读取 MISSION.md、NOTES.md、docs/12-week-roadmap.md、docs/ai-engineering-from-scratch-week-map.md 和 learning-records。按照 Week 01–12 的顺序，只生成当前学习进度所需的下一个 Lesson，不要一次生成整个 Week 或后续 Lessons。以映射表为当前 Week 选定的 `fancyboi999/ai-engineering-from-scratch-zh` 课程为主要学习来源；映射表标明资料不足的部分，使用其中列出的一手资料补充。Lesson 必须先用自然、易懂的中文逐步讲清基础概念，再给出具体的 Practice 步骤，并为 projects/web-creation-agent-workbench 增加一个可测试、可演示、可解释的成果。不要按照日期安排学习进度。
 
 5. 只有代码、测试、演示和闭卷解释通过后，才新增 Learning Record 或完成证据。
 
