@@ -29,8 +29,9 @@
         <p class="eyebrow">Lesson 0001 · Week 01 · Agent Loop</p>
         <h1>让模型借助工具<br>完成一件事</h1>
         <p class="lesson-hero__lede">
-          模型不会亲自执行 TypeScript 函数。你要写的是中间那段应用程序：
-          接住模型的工具请求、执行一个只读工具、把结果交回模型，并在正确时刻结束。
+          先运行参考课程的 <code>main.ts</code>，看懂它的工具注册表、脚本模型、
+          AgentLoop、运行记录和轨迹输出；再保留这套骨架，把它改造成
+          Web Creation Agent Workbench 的第一个可验证成果。
         </p>
         <dl class="lesson-meta">
           <div>
@@ -76,9 +77,11 @@
             <div class="callout">
               <strong>看得见的完成标准</strong>
               <p>
-                在 <code>projects/web-creation-agent-workbench/</code> 中运行
+                你能先指出参考 <code>main.ts</code> 的五个核心部分，再把它们逐项映射到
+                Workbench 代码；然后在
+                <code>projects/web-creation-agent-workbench/</code> 中运行
                 <code>npm test</code>，四条关键路径通过；运行 <code>npm run demo</code>，
-                终端按顺序显示用户输入、模型请求、工具调用、工具结果和最终回答。
+                终端从保存的 <code>history</code> 打印工具调用、工具结果和最终回答。
               </p>
             </div>
 
@@ -95,7 +98,7 @@
               问题来自循环，还是来自模型这次恰好换了一种回答。
             </p>
             <p>
-              所以本课使用<strong>可控假模型</strong>：提前写好第一轮和第二轮返回什么。
+              所以本课使用<strong>按脚本回答的模型</strong>：提前写好第一轮和第二轮返回什么。
               它不模拟智能，只让同一条测试每次得到相同结果。等循环通过测试后，
               后续 Lesson 再把它替换为真实的 Responses-compatible Model Profile。
             </p>
@@ -103,9 +106,9 @@
 
           <section class="lesson-section" id="sources">
             <p class="eyebrow">02 · Source Reading</p>
-            <h2>先读主课，但只读与本课有关的部分</h2>
+            <h2>以 main.ts 为底稿，不另写一套平行示例</h2>
             <p>
-              不需要顺着外部仓库继续学习后面的 Phase。本课只使用下面四份材料，
+              不需要顺着外部仓库继续学习后面的 Phase。本课只使用下面五份材料，
               阅读时带着右侧的问题找答案。
             </p>
 
@@ -120,12 +123,24 @@
               <tbody>
                 <tr>
                   <td>
-                    <a href="https://github.com/fancyboi999/ai-engineering-from-scratch-zh/blob/8fe867f055b810f6e39be9faff68db6137077f7a/phases/14-agent-engineering/01-the-agent-loop/docs/zh.md">
-                      主课：P14-L01 Agent 循环
+                    <a href="https://github.com/fancyboi999/ai-engineering-from-scratch-zh/blob/8fe867f055b810f6e39be9faff68db6137077f7a/phases/14-agent-engineering/01-the-agent-loop/code/main.ts">
+                      主要代码：P14-L01 main.ts
                     </a>
                   </td>
-                  <td>“问题背景”“五大要素”“练习”</td>
-                  <td>为什么上下文会增长？为什么必须限制最大轮次？</td>
+                  <td>
+                    <code>ToolRegistry</code>、<code>ToyLLM</code>、
+                    <code>AgentLoop</code>、<code>history</code>、<code>prettyTrace</code>
+                  </td>
+                  <td>这五个部分如何接成一个完整循环？</td>
+                </tr>
+                <tr>
+                  <td>
+                    <a href="https://github.com/fancyboi999/ai-engineering-from-scratch-zh/blob/8fe867f055b810f6e39be9faff68db6137077f7a/phases/14-agent-engineering/01-the-agent-loop/docs/zh.md">
+                      主课讲解：P14-L01 Agent 循环
+                    </a>
+                  </td>
+                  <td>“问题背景”“五大要素”“动手构建”</td>
+                  <td>代码中的每个类分别承担哪一个要素？</td>
                 </tr>
                 <tr>
                   <td>
@@ -160,10 +175,58 @@
             <div class="callout">
               <strong>资料发生冲突时怎么处理</strong>
               <p>
-                外部中文课程负责解释原理；Responses API 的字段形状以 OpenAI 官方文档为准。
-                本课只采用当前实现真正需要的字段，不照搬旧接口或其他 Provider 的写法。
+                <code>main.ts</code> 负责本课的代码结构；Responses API 的字段形状以
+                OpenAI 官方文档为准。不是抛开源码重写，而是在源码骨架上替换协议层和项目工具。
               </p>
             </div>
+
+            <h3>先明确哪些保留，哪些修改</h3>
+            <table class="test-table">
+              <thead>
+                <tr>
+                  <th>main.ts</th>
+                  <th>Workbench 版本</th>
+                  <th>处理方式与原因</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>ToolRegistry</code> 类</td>
+                  <td><code>ToolRegistry</code> 类</td>
+                  <td>保留：继续负责注册、列出和执行允许的工具。</td>
+                </tr>
+                <tr>
+                  <td><code>ToyLLM + ScriptEntry</code></td>
+                  <td><code>ScriptedModel + ModelResponse</code></td>
+                  <td>保留脚本模型；返回值改成工具调用协议的形状。</td>
+                </tr>
+                <tr>
+                  <td><code>AgentLoop</code> 类</td>
+                  <td><code>AgentLoop</code> 类</td>
+                  <td>保留：改成异步调用，并加入 <code>call_id</code> 回填。</td>
+                </tr>
+                <tr>
+                  <td><code>Turn[] history</code></td>
+                  <td><code>TraceEntry[] history</code></td>
+                  <td>保留运行记录；不保存模型内部思考，只保存可审计事件。</td>
+                </tr>
+                <tr>
+                  <td><code>prettyTrace()</code></td>
+                  <td><code>formatTrace()</code></td>
+                  <td>保留：由保存的 history 生成可重复演示文本。</td>
+                </tr>
+                <tr>
+                  <td>calculator、<code>kv_get</code>、<code>kv_set</code></td>
+                  <td><code>read_project_brief</code></td>
+                  <td>替换：roadmap 只允许一个与主作品有关的只读工具。</td>
+                </tr>
+                <tr>
+                  <td><code>thought/action/observation</code></td>
+                  <td><code>function_call/function_call_output</code></td>
+                  <td>替换：对齐 Responses 工具调用，并用 <code>call_id</code> 配对。</td>
+                </tr>
+              </tbody>
+            </table>
 
             <h3>把课程术语换成容易理解的话</h3>
             <table class="test-table">
@@ -467,13 +530,48 @@
 
           <section class="lesson-section" id="practice">
             <p class="eyebrow">06 · Practice</p>
-            <h2>现在亲手写出循环</h2>
+            <h2>先运行原版，再逐项改造成项目版本</h2>
             <p>
-              从仓库根目录开始。每一步都先完成“操作”，再运行命令检查；
+              不要跳过 Step 0。先看到参考实现如何运行，后面的每次修改才有明确参照。
+              每一步都先完成“操作”，再运行命令检查；
               如果实际结果与“预期”不同，就停在当前步骤排查，不要继续复制后面的代码。
             </p>
 
-            <h3>Step 1 · 建立最小 TypeScript 项目</h3>
+            <h3>Step 0 · 运行参考课程的 main.ts</h3>
+            <p>
+              <strong>目标：</strong>先看到原始 AgentLoop 的完整轨迹，
+              并在源码中找到本课要保留的五个部分。
+            </p>
+            <p>
+              <strong>操作位置：</strong>系统临时目录，不在当前项目中创建另一个 Demo。
+            </p>
+            <p><strong>操作：</strong>从任意目录运行：</p>
+            <pre><code>LESSON_SOURCE_DIR="$(mktemp -d)"
+git clone https://github.com/fancyboi999/ai-engineering-from-scratch-zh.git "$LESSON_SOURCE_DIR"
+git -C "$LESSON_SOURCE_DIR" checkout --detach 8fe867f055b810f6e39be9faff68db6137077f7a
+npx --yes tsx "$LESSON_SOURCE_DIR/phases/14-agent-engineering/01-the-agent-loop/code/main.ts"</code></pre>
+
+            <p>
+              <strong>预期：</strong>终端先打印多次工具动作，再打印最终答案、
+              使用轮次和工具名称。
+            </p>
+            <p>
+              <strong>阅读源码：</strong>打开固定版本的
+              <a href="https://github.com/fancyboi999/ai-engineering-from-scratch-zh/blob/8fe867f055b810f6e39be9faff68db6137077f7a/phases/14-agent-engineering/01-the-agent-loop/code/main.ts">
+                code/main.ts
+              </a>，依次定位：
+              <code>ToolRegistry</code>、<code>ToyLLM</code>、
+              <code>AgentLoop</code>、<code>history</code>、<code>prettyTrace</code>。
+            </p>
+            <div class="checkpoint">
+              <h3>自检 0</h3>
+              <p>
+                不看上面的列表，回答：工具在哪里注册？脚本模型在哪里推进到下一步？
+                每次工具结果存在哪里？达到最大轮次后在哪里结束？
+              </p>
+            </div>
+
+            <h3>Step 1 · 在主作品中建立 TypeScript 项目</h3>
             <p><strong>目标：</strong>得到能运行类型检查、Vitest 和终端演示的空项目。</p>
             <p><strong>修改位置：</strong><code>projects/web-creation-agent-workbench/</code></p>
             <p><strong>操作：</strong>在仓库根目录依次运行：</p>
@@ -553,6 +651,13 @@ export type ModelResponse = {
   output_text: string;
 };
 
+export type TraceEntry =
+  | { kind: "user"; content: string }
+  | { kind: "function_call"; call: FunctionCall }
+  | { kind: "function_call_output"; result: FunctionCallOutput }
+  | { kind: "final"; content: string }
+  | { kind: "stopped"; content: string };
+
 export interface ModelClient {
   respond(
     input: readonly InputItem[],
@@ -567,6 +672,8 @@ export interface ModelClient {
               <p>
                 指着 <code>FunctionCall</code> 说出：哪个字段选择工具？
                 哪个字段要解析？哪个字段负责配对结果？
+                再把 <code>TraceEntry</code> 与原版 <code>Turn</code> 逐项比较：
+                为什么项目版没有 <code>thought</code>？
               </p>
             </div>
 
@@ -585,6 +692,53 @@ type Tool = {
   definition: FunctionToolDefinition;
   execute: (argumentsJson: string) =&gt; string;
 };
+
+export class ToolRegistry {
+  private readonly tools = new Map&lt;string, Tool&gt;();
+
+  register(tool: Tool): void {
+    this.tools.set(tool.definition.name, tool);
+  }
+
+  names(): string[] {
+    return [...this.tools.keys()].sort();
+  }
+
+  definitions(): FunctionToolDefinition[] {
+    return [...this.tools.values()].map(
+      (tool) =&gt; tool.definition,
+    );
+  }
+
+  dispatch(call: FunctionCall): string {
+    const tool = this.tools.get(call.name);
+
+    if (!tool) {
+      return JSON.stringify({
+        ok: false,
+        error: {
+          code: "UNKNOWN_TOOL",
+          message: `未开放工具：${call.name}`,
+        },
+      });
+    }
+
+    try {
+      return tool.execute(call.arguments);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "未知工具错误";
+
+      return JSON.stringify({
+        ok: false,
+        error: {
+          code: "TOOL_EXECUTION_FAILED",
+          message,
+        },
+      });
+    }
+  }
+}
 
 function isRecord(value: unknown): value is Record&lt;string, unknown&gt; {
   return typeof value === "object" &amp;&amp; value !== null;
@@ -651,28 +805,10 @@ const readProjectBrief: Tool = {
   },
 };
 
-const toolRegistry: Record&lt;string, Tool&gt; = {
-  [readProjectBrief.definition.name]: readProjectBrief,
-};
-
-export const toolDefinitions = Object.values(toolRegistry).map(
-  (tool) =&gt; tool.definition,
-);
-
-export function executeTool(call: FunctionCall): string {
-  const tool = toolRegistry[call.name];
-
-  if (!tool) {
-    return JSON.stringify({
-      ok: false,
-      error: {
-        code: "UNKNOWN_TOOL",
-        message: `未开放工具：${call.name}`,
-      },
-    });
-  }
-
-  return tool.execute(call.arguments);
+export function buildToolRegistry(): ToolRegistry {
+  const tools = new ToolRegistry();
+  tools.register(readProjectBrief);
+  return tools;
 }</code></pre>
 
             <p><strong>运行：</strong><code>npm run check</code></p>
@@ -680,17 +816,18 @@ export function executeTool(call: FunctionCall): string {
             <div class="checkpoint">
               <h3>自检 3</h3>
               <p>
-                <code>toolRegistry</code> 为什么比
-                <code>globalThis[call.name]()</code> 安全？模型能否请求清单以外的函数？
+                对照原版 <code>ToolRegistry</code>：项目版的
+                <code>register</code>、<code>names</code>、<code>dispatch</code>
+                分别保留了什么？新增的 <code>definitions</code> 为什么是 Responses 调用所需？
               </p>
             </div>
 
-            <h3>Step 4 · 写一个按预设顺序回答的假模型</h3>
+            <h3>Step 4 · 把 ToyLLM 改成协议形状的脚本模型</h3>
             <p>
-              <strong>目标：</strong>让测试能安排“第一轮请求工具、第二轮最终回答”，
-              并检查模型每轮实际收到的上下文。
+              <strong>目标：</strong>保留原版“脚本数组 + 游标”的确定性模型，
+              但让每条脚本返回 <code>ModelResponse</code>。
             </p>
-            <p><strong>新建文件：</strong><code>src/fake-model.ts</code></p>
+            <p><strong>新建文件：</strong><code>src/scripted-model.ts</code></p>
             <pre><code>import type {
   FunctionToolDefinition,
   InputItem,
@@ -698,17 +835,15 @@ export function executeTool(call: FunctionCall): string {
   ModelResponse,
 } from "./protocol.js";
 
-export class FakeModel implements ModelClient {
+export class ScriptedModel implements ModelClient {
   readonly requests: Array&lt;{
     input: InputItem[];
     tools: FunctionToolDefinition[];
   }&gt; = [];
 
-  private readonly responses: ModelResponse[];
+  private cursor = 0;
 
-  constructor(responses: ModelResponse[]) {
-    this.responses = [...responses];
-  }
+  constructor(private readonly script: ModelResponse[]) {}
 
   async respond(
     input: readonly InputItem[],
@@ -719,12 +854,13 @@ export class FakeModel implements ModelClient {
       tools: [...tools],
     });
 
-    const response = this.responses.shift();
+    const response = this.script[this.cursor];
 
     if (!response) {
-      throw new Error("假模型没有下一条预设响应");
+      throw new Error("脚本模型没有下一条预设响应");
     }
 
+    this.cursor += 1;
     return response;
   }
 }</code></pre>
@@ -734,25 +870,27 @@ export class FakeModel implements ModelClient {
             <div class="checkpoint">
               <h3>自检 4</h3>
               <p>
-                为什么假模型要保存 <code>requests</code>？
-                如果只检查最终文字，能否证明工具结果确实进入了第二轮？
+                找出它与原版 <code>ToyLLM</code> 相同的两部分：
+                <code>script</code> 和 <code>cursor</code>。项目版额外保存
+                <code>requests</code>，这让哪一条数据流可以被测试？
               </p>
             </div>
 
-            <h3>Step 5 · 先把循环写成流程骨架</h3>
+            <h3>Step 5 · 保留 AgentLoop、history 与轨迹格式化</h3>
             <p>
-              <strong>目标：</strong>先自己把五个动作对应到代码位置，再查看完整实现。
+              <strong>目标：</strong>按照参考 <code>main.ts</code> 的结构实现
+              <code>AgentLoop</code>，每发生一个可见动作就写入 <code>history</code>。
             </p>
             <p><strong>新建文件：</strong><code>src/agent-loop.ts</code></p>
             <p><strong>操作提示：</strong>先不要展开答案，按下面顺序写出自己的版本：</p>
             <ol class="steps">
-              <li><span>建立 <code>input</code> 数组，先放入用户输入。</span></li>
+              <li><span>像原版一样，在类上建立公开只读的 <code>history</code> 数组。</span></li>
+              <li><span>把用户输入同时放入模型 <code>input</code> 和运行 <code>history</code>。</span></li>
               <li><span>用 <code>for</code> 循环限制最多请求模型 <code>maxTurns</code> 次。</span></li>
-              <li><span>每轮把当前 <code>input</code> 和工具定义交给模型。</span></li>
-              <li><span>把模型返回的工具请求追加到 <code>input</code>。</span></li>
-              <li><span>没有工具请求时，检查并返回最终文字。</span></li>
-              <li><span>有工具请求时，执行工具并追加 <code>function_call_output</code>。</span></li>
-              <li><span>循环用尽后抛出包含最大轮次的错误。</span></li>
+              <li><span>收到工具请求时，把请求写入两处，再由 <code>ToolRegistry.dispatch()</code> 执行。</span></li>
+              <li><span>用相同 <code>call_id</code> 构造工具结果，并写入两处。</span></li>
+              <li><span>收到最终文字或耗尽轮次时，把终态写入 <code>history</code>。</span></li>
+              <li><span>仿照 <code>prettyTrace()</code>，从 history 生成演示文本。</span></li>
             </ol>
 
             <details class="answer">
@@ -761,65 +899,108 @@ export class FakeModel implements ModelClient {
   FunctionCallOutput,
   InputItem,
   ModelClient,
+  TraceEntry,
 } from "./protocol.js";
-import {
-  executeTool,
-  toolDefinitions,
-} from "./tools.js";
+import { ToolRegistry } from "./tools.js";
 
-type RunAgentOptions = {
-  model: ModelClient;
-  userText: string;
-  maxTurns?: number;
-  onEvent?: (event: string) =&gt; void;
-};
+export class AgentLoop {
+  readonly history: TraceEntry[] = [];
 
-export async function runAgent({
-  model,
-  userText,
-  maxTurns = 4,
-  onEvent = () =&gt; {},
-}: RunAgentOptions): Promise&lt;string&gt; {
-  const input: InputItem[] = [
-    { role: "user", content: userText },
-  ];
+  constructor(
+    private readonly model: ModelClient,
+    private readonly tools: ToolRegistry,
+    private readonly maxTurns = 4,
+  ) {}
 
-  onEvent(`[user] ${userText}`);
+  async run(userText: string): Promise&lt;string&gt; {
+    const input: InputItem[] = [
+      { role: "user", content: userText },
+    ];
 
-  for (let turn = 1; turn &lt;= maxTurns; turn += 1) {
-    onEvent(`[model_request] turn=${turn}`);
+    this.history.push({ kind: "user", content: userText });
 
-    const response = await model.respond(input, toolDefinitions);
-    input.push(...response.output);
+    for (let turn = 1; turn &lt;= this.maxTurns; turn += 1) {
+      const response = await this.model.respond(
+        input,
+        this.tools.definitions(),
+      );
 
-    if (response.output.length === 0) {
-      if (!response.output_text) {
-        throw new Error("模型既没有请求工具，也没有返回最终回答");
+      input.push(...response.output);
+
+      if (response.output.length === 0) {
+        if (!response.output_text) {
+          throw new Error(
+            "模型既没有请求工具，也没有返回最终回答",
+          );
+        }
+
+        this.history.push({
+          kind: "final",
+          content: response.output_text,
+        });
+        return response.output_text;
       }
 
-      onEvent(`[final] ${response.output_text}`);
-      return response.output_text;
+      if (response.output.length &gt; 1) {
+        throw new Error("本课一次只处理一个工具请求");
+      }
+
+      const call = response.output[0];
+      this.history.push({ kind: "function_call", call });
+
+      const result: FunctionCallOutput = {
+        type: "function_call_output",
+        call_id: call.call_id,
+        output: this.tools.dispatch(call),
+      };
+
+      input.push(result);
+      this.history.push({
+        kind: "function_call_output",
+        result,
+      });
     }
 
-    if (response.output.length &gt; 1) {
-      throw new Error("本课一次只处理一个工具请求");
-    }
-
-    const call = response.output[0];
-    onEvent(`[function_call] ${call.name} · ${call.call_id}`);
-
-    const output = executeTool(call);
-    const result: FunctionCallOutput = {
-      type: "function_call_output",
-      call_id: call.call_id,
-      output,
-    };
-
-    input.push(result);
-    onEvent(`[function_call_output] ${call.call_id} · ${output}`);
+    const content = `超过最大轮次 ${this.maxTurns}，运行已结束`;
+    this.history.push({ kind: "stopped", content });
+    throw new Error(content);
   }
 
-  throw new Error(`超过最大轮次 ${maxTurns}，运行已结束`);
+  toolNames(): string[] {
+    return this.tools.names();
+  }
+}
+
+export function formatTrace(history: TraceEntry[]): string {
+  return history
+    .map((entry, index) =&gt; {
+      const number = String(index).padStart(2, "0");
+
+      switch (entry.kind) {
+        case "user":
+          return `[${number} user] ${entry.content}`;
+        case "function_call":
+          return [
+            `[${number} tool request]`,
+            `${entry.call.name}(${entry.call.arguments})`,
+            `call_id=${entry.call.call_id}`,
+          ].join(" · ");
+        case "function_call_output":
+          return [
+            `[${number} tool result]`,
+            `call_id=${entry.result.call_id}`,
+            entry.result.output,
+          ].join(" · ");
+        case "final":
+          return `[${number} final] ${entry.content}`;
+        case "stopped":
+          return `[${number} stopped] ${entry.content}`;
+      }
+
+      const unreachable: never = entry;
+      return unreachable;
+    })
+    .join("\n");
 }</code></pre>
             </details>
 
@@ -828,8 +1009,9 @@ export async function runAgent({
             <div class="checkpoint">
               <h3>自检 5</h3>
               <p>
-                在代码里指出两行：哪一行让上下文增长？
-                哪一行保证工具结果沿用原来的 <code>call_id</code>？
+                对照原版 <code>AgentLoop.run()</code>：模型调用、工具执行、
+                history 追加、最大轮次分别还在什么位置？为什么项目版同时需要
+                <code>input</code> 和 <code>history</code>，不能只保留一个？
               </p>
             </div>
 
@@ -840,8 +1022,10 @@ export async function runAgent({
             </p>
             <p><strong>新建文件：</strong><code>test/agent-loop.test.ts</code></p>
             <pre><code>import { describe, expect, it } from "vitest";
-import { runAgent } from "../src/agent-loop.js";
-import { FakeModel } from "../src/fake-model.js";
+import { AgentLoop } from "../src/agent-loop.js";
+import { ScriptedModel } from "../src/scripted-model.js";
+import { buildToolRegistry } from "../src/tools.js";
+import type { ModelResponse } from "../src/protocol.js";
 
 const toolCall = (
   callId: string,
@@ -858,9 +1042,23 @@ const toolCall = (
   output_text: "",
 });
 
-describe("runAgent", () =&gt; {
+function createLoop(
+  script: ModelResponse[],
+  maxTurns = 4,
+): { loop: AgentLoop; model: ScriptedModel } {
+  const model = new ScriptedModel(script);
+  const loop = new AgentLoop(
+    model,
+    buildToolRegistry(),
+    maxTurns,
+  );
+
+  return { loop, model };
+}
+
+describe("AgentLoop", () =&gt; {
   it("执行工具并把结果交回同一次调用", async () =&gt; {
-    const model = new FakeModel([
+    const { loop, model } = createLoop([
       toolCall("call_001"),
       {
         output: [],
@@ -868,16 +1066,21 @@ describe("runAgent", () =&gt; {
       },
     ]);
 
-    const answer = await runAgent({
-      model,
-      userText: "读取项目说明并总结",
-    });
+    const answer = await loop.run("读取项目说明并总结");
 
     expect(answer).toContain("独立开发者");
     expect(model.requests).toHaveLength(2);
+    expect(loop.history.map((entry) =&gt; entry.kind)).toEqual([
+      "user",
+      "function_call",
+      "function_call_output",
+      "final",
+    ]);
 
     const result = model.requests[1].input.find(
-      (item) =&gt; item.type === "function_call_output",
+      (item) =&gt;
+        "type" in item &amp;&amp;
+        item.type === "function_call_output",
     );
 
     expect(result).toMatchObject({
@@ -887,7 +1090,7 @@ describe("runAgent", () =&gt; {
   });
 
   it("参数错误时把错误结果交回模型", async () =&gt; {
-    const model = new FakeModel([
+    const { loop } = createLoop([
       toolCall("call_bad_args", "{}"),
       {
         output: [],
@@ -895,57 +1098,55 @@ describe("runAgent", () =&gt; {
       },
     ]);
 
-    await runAgent({
-      model,
-      userText: "读取项目说明",
-    });
+    await loop.run("读取项目说明");
 
-    const result = model.requests[1].input.find(
-      (item) =&gt; item.type === "function_call_output",
+    const entry = loop.history.find(
+      (item) =&gt; item.kind === "function_call_output",
     );
 
-    if (result?.type !== "function_call_output") {
-      throw new Error("第二轮缺少工具结果");
+    if (entry?.kind !== "function_call_output") {
+      throw new Error("history 缺少工具结果");
     }
 
-    expect(JSON.parse(result.output)).toMatchObject({
+    expect(JSON.parse(entry.result.output)).toMatchObject({
       ok: false,
       error: { code: "INVALID_ARGUMENTS" },
     });
   });
 
   it("模型不请求工具时直接结束", async () =&gt; {
-    const model = new FakeModel([
+    const { loop, model } = createLoop([
       {
         output: [],
         output_text: "你好，现在不需要读取项目说明。",
       },
     ]);
 
-    const answer = await runAgent({
-      model,
-      userText: "你好",
-    });
+    const answer = await loop.run("你好");
 
     expect(answer).toBe("你好，现在不需要读取项目说明。");
     expect(model.requests).toHaveLength(1);
+    expect(loop.history.map((entry) =&gt; entry.kind)).toEqual([
+      "user",
+      "final",
+    ]);
   });
 
   it("达到最大轮次后结束", async () =&gt; {
-    const model = new FakeModel([
+    const { loop, model } = createLoop([
       toolCall("call_001"),
       toolCall("call_002"),
-    ]);
+    ], 2);
 
     await expect(
-      runAgent({
-        model,
-        userText: "一直读取项目说明",
-        maxTurns: 2,
-      }),
+      loop.run("一直读取项目说明"),
     ).rejects.toThrow("超过最大轮次 2");
 
     expect(model.requests).toHaveLength(2);
+    expect(loop.history.at(-1)).toEqual({
+      kind: "stopped",
+      content: "超过最大轮次 2，运行已结束",
+    });
   });
 });</code></pre>
 
@@ -962,13 +1163,18 @@ describe("runAgent", () =&gt; {
 
             <h3>Step 7 · 做出可以现场演示的终端输出</h3>
             <p>
-              <strong>目标：</strong>让别人不用读代码，也能看见循环的因果顺序。
+              <strong>目标：</strong>像参考代码的 <code>prettyTrace()</code> 一样，
+              运行结束后从保存的 history 打印完整轨迹。
             </p>
             <p><strong>新建文件：</strong><code>src/demo.ts</code></p>
-            <pre><code>import { runAgent } from "./agent-loop.js";
-import { FakeModel } from "./fake-model.js";
+            <pre><code>import {
+  AgentLoop,
+  formatTrace,
+} from "./agent-loop.js";
+import { ScriptedModel } from "./scripted-model.js";
+import { buildToolRegistry } from "./tools.js";
 
-const model = new FakeModel([
+const model = new ScriptedModel([
   {
     output: [
       {
@@ -987,20 +1193,30 @@ const model = new FakeModel([
   },
 ]);
 
-await runAgent({
+const agent = new AgentLoop(
   model,
-  userText: "读取 demo-landing-page 的项目说明并总结",
-  onEvent: console.log,
-});</code></pre>
+  buildToolRegistry(),
+  4,
+);
+
+const final = await agent.run(
+  "读取 demo-landing-page 的项目说明并总结",
+);
+
+console.log(formatTrace(agent.history));
+console.log(`final answer: ${final}`);
+console.log(`model turns: ${model.requests.length}`);
+console.log(`tools used: ${JSON.stringify(agent.toolNames())}`);</code></pre>
 
             <p><strong>运行：</strong><code>npm run demo</code></p>
             <p><strong>预期：</strong></p>
-            <pre><code>[user] 读取 demo-landing-page 的项目说明并总结
-[model_request] turn=1
-[function_call] read_project_brief · call_demo_001
-[function_call_output] call_demo_001 · {"ok":true,"data":{...}}
-[model_request] turn=2
-[final] 这个落地页服务于独立开发者，目标是收集候补名单。</code></pre>
+            <pre><code>[00 user] 读取 demo-landing-page 的项目说明并总结
+[01 tool request] · read_project_brief(...) · call_id=call_demo_001
+[02 tool result] · call_id=call_demo_001 · {"ok":true,"data":{...}}
+[03 final] 这个落地页服务于独立开发者，目标是收集候补名单。
+final answer: 这个落地页服务于独立开发者，目标是收集候补名单。
+model turns: 2
+tools used: ["read_project_brief"]</code></pre>
 
             <div class="callout">
               <strong>到这里就停</strong>
@@ -1036,7 +1252,7 @@ await runAgent({
                 <tr>
                   <td>Demo</td>
                   <td><code>npm run demo</code></td>
-                  <td>五个动作顺序清楚，两个 <code>call_id</code> 一致。</td>
+                  <td>四类运行记录顺序清楚，两个 <code>call_id</code> 一致。</td>
                 </tr>
                 <tr>
                   <td>Explain</td>
@@ -1051,7 +1267,8 @@ await runAgent({
               <li>
                 <span>
                   把 <code>demo.ts</code> 中的 <code>arguments</code> 暂时改成
-                  <code>"{}"</code>。
+                  <code>"{}"</code>，并把第二条脚本的 <code>output_text</code>
+                  改成“缺少 briefId，无法读取项目说明”。
                 </span>
               </li>
               <li>
