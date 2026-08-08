@@ -35,6 +35,7 @@ jobs:
         run: |
           mkdir -p _site
           cp learning-hub.html _site/index.html
+          cp learning-hub.html _site/learning-hub.html
           cp -R assets docs evidence learning-records lessons reference _site/
           touch _site/.nojekyll
 
