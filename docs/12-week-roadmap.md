@@ -14,7 +14,7 @@
 - Explain: 不看代码画出循环，说明 `call_id`、工具结果回填和无限循环风险。
 - Interview: 回答“Agent 与一次普通 LLM 请求的本质区别是什么？”
 
-## Week 02 · Model Profile 与 Packy 能力检查
+## Week 02 · Model Profile 与 Responses 能力检查
 
 - Outcome: 受控选择服务端 Model Profile，并知道“OpenAI-compatible”不等于 Responses-compatible。
 - Build: 实现 Profile loader；配置 Packy Terra Profile，Base URL 为 `https://www.packyapi.com/v1`，Model ID 为 `gpt-5.6-terra`。
