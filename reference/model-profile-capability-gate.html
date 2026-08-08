@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Model Profile、Capability Report 与安全模型选项的边界速查。"
+    >
+    <title>Reference · Model Profile 能力门禁</title>
+    <link rel="stylesheet" href="../assets/course.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#reference-content">跳到速查正文</a>
+
+    <header class="masthead">
+      <div class="masthead__inner">
+        <a class="masthead__brand" href="../learning-hub.html">Agent Learning Hub</a>
+        <nav aria-label="速查表相关资料">
+          <a href="../lessons/0002-model-profile-capability-gate.html">Lesson 0002</a>
+          <a href="../docs/12-week-roadmap.md">12 Week 路线</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="lesson" id="reference-content">
+      <header class="lesson-hero">
+        <p class="eyebrow">Reference · Week 02</p>
+        <h1>Model Profile<br>能力门禁</h1>
+        <p class="lesson-hero__lede">
+          配置说明如何连接，检查报告证明能否使用，
+          选择器只展示安全的公开信息。
+        </p>
+      </header>
+
+      <div class="lesson-layout">
+        <aside class="lesson-nav" aria-label="速查目录">
+          <p>速查</p>
+          <ol>
+            <li><a href="#objects">三种对象</a></li>
+            <li><a href="#gate">通过条件</a></li>
+            <li><a href="#capabilities">必要能力</a></li>
+            <li><a href="#boundary">安全边界</a></li>
+          </ol>
+        </aside>
+
+        <article class="lesson-content">
+          <section class="lesson-section" id="objects">
+            <p class="eyebrow">01 · Objects</p>
+            <h2>三种对象，三种职责</h2>
+            <table class="test-table">
+              <thead>
+                <tr>
+                  <th>对象</th>
+                  <th>关键字段</th>
+                  <th>作用</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>ModelProfileDefinition</td>
+                  <td><code>id</code>、<code>label</code>、<code>baseUrl</code>、<code>modelId</code>、<code>apiKeyEnv</code></td>
+                  <td>服务端管理的规范化连接配置。</td>
+                </tr>
+                <tr>
+                  <td>CapabilityReport</td>
+                  <td><code>profileId</code>、<code>checks</code></td>
+                  <td>记录真实能力检查观察到的结果。</td>
+                </tr>
+                <tr>
+                  <td>ModelOption</td>
+                  <td><code>id</code>、<code>label</code></td>
+                  <td>可以安全交给模型选择器的最小对象。</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section class="lesson-section" id="gate">
+            <p class="eyebrow">02 · Gate</p>
+            <h2>唯一的通过公式</h2>
+            <pre><code>valid definition
+AND server-side secret exists
+AND capability report exists
+AND every required check is true
+→ available
+
+otherwise
+→ rejected with reasons</code></pre>
+            <div class="callout">
+              <strong>Fail closed</strong>
+              <p>未检查、缺配置、缺密钥或任意能力失败，都不可选。</p>
+            </div>
+          </section>
+
+          <section class="lesson-section" id="capabilities">
+            <p class="eyebrow">03 · Capabilities</p>
+            <h2>Week 02 的五项必要检查</h2>
+            <ul class="file-map">
+              <li><code>responses</code>能调用 Responses endpoint 并读取响应。</li>
+              <li><code>typed_streaming</code>能按 <code>type</code> 区分语义流式事件。</li>
+              <li><code>function_calling</code>能发出工具请求并接收配对结果。</li>
+              <li><code>structured_errors</code>失败能被程序稳定识别。</li>
+              <li><code>cancellation</code>应用取消后请求能停止并返回可判定结果。</li>
+            </ul>
+          </section>
+
+          <section class="lesson-section" id="boundary">
+            <p class="eyebrow">04 · Boundary</p>
+            <h2>什么可以离开服务端</h2>
+            <table class="test-table">
+              <thead>
+                <tr>
+                  <th>信息</th>
+                  <th>服务端</th>
+                  <th>模型选择器</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Profile ID / Label</td><td>可见</td><td>可见</td></tr>
+                <tr><td>Base URL / Model ID</td><td>可见</td><td>不需要</td></tr>
+                <tr><td>API Key 环境变量名</td><td>可见</td><td>不可见</td></tr>
+                <tr><td>API Key 值</td><td>运行时使用</td><td>不可见</td></tr>
+                <tr><td>详细检查报告</td><td>可见</td><td>不需要</td></tr>
+              </tbody>
+            </table>
+          </section>
+        </article>
+      </div>
+    </main>
+
+    <footer class="lesson-footer">
+      <div class="lesson-footer__inner">
+        <p>Road to Agent 90 · Reference</p>
+        <p><a href="../lessons/0002-model-profile-capability-gate.html">返回 Lesson 0002</a></p>
+      </div>
+    </footer>
+  </body>
+</html>
