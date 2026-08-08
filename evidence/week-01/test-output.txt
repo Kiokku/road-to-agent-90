@@ -1,0 +1,27 @@
+Week 01 · 最小 Agent Loop
+验证日期：2026-08-08（Asia/Shanghai）
+
+$ npm run check
+
+> web-creation-agent-workbench@1.0.0 check
+> tsc --noEmit
+
+退出码：0
+
+$ npm test
+
+> web-creation-agent-workbench@1.0.0 test
+> vitest run
+
+RUN  v4.1.10 projects/web-creation-agent-workbench
+
+Test Files  1 passed (1)
+Tests       4 passed (4)
+
+覆盖路径：
+- 正确执行工具并用同一个 call_id 回填 function_call_output
+- 参数校验失败时把结构化错误交回模型
+- 模型不请求工具时直接返回最终回答
+- 达到最大轮次后停止运行
+
+退出码：0

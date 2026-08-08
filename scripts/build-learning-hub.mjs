@@ -151,7 +151,7 @@ const weekRows = roadmap.map((week) => {
 const recordRows = records.map((record, index) => `
   <a class="ledger-row" href="${toUrl(`learning-records/${record.file}`)}">
     <span class="ledger-index">R${String(index + 1).padStart(2, "0")}</span>
-    <span><strong>${escapeHtml(record.title)}</strong><small>${escapeHtml(record.summary)}</small></span>
+    <span><strong>${escapeHtml(record.title)}</strong><small>${escapeHtml(stripMarkdown(record.summary))}</small></span>
     <span class="row-arrow" aria-hidden="true">↗</span>
   </a>`).join("");
 
@@ -274,7 +274,7 @@ const html = `<!doctype html>
           <div class="subheading"><span>Lessons</span><small>Interactive teaching artifacts</small></div>
           ${lessonRows.trimStart()}
           <div class="subheading subheading--spaced"><span>Weekly evidence</span><small>Build · Test · Demo · Explain</small></div>
-          ${evidenceRows}
+          ${evidenceRows.trimStart()}
         </div>
         <div>
           <div class="subheading"><span>Learning Records</span><small>Prior knowledge and confirmed decisions</small></div>${recordRows}

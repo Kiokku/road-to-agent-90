@@ -1,0 +1,17 @@
+Week 01 · 最小 Agent Loop CLI Demo
+验证日期：2026-08-08（Asia/Shanghai）
+
+$ npm run demo
+
+> web-creation-agent-workbench@1.0.0 demo
+> tsx src/demo.ts
+
+[00 user] 读取 demo-landing-page 的项目说明并总结
+[01 tool request] · read_project_brief({"briefId":"demo-landing-page"}) · call_id=call_demo_001
+[02 tool result] · call_id=call_demo_001 · {"ok":true,"data":{"version":"v1","audience":"独立开发者","goal":"收集候补名单"}}
+[03 final] 这个落地页服务于独立开发者，目标是收集候补名单。
+final answer: 这个落地页服务于独立开发者，目标是收集候补名单。
+model turns: 2
+tools used: ["read_project_brief"]
+
+退出码：0

@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="assets/hub.css">
   <script src="assets/hub.js" defer></script>
 </head>
-<body data-current-week="01">
+<body data-current-week="02">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="masthead">
     <a class="brand" href="#top"><span>AGENT</span><i>/</i><span>LEARNING HUB</span></a>
@@ -42,12 +42,12 @@
       </div>
       <div class="current-rail" id="current">
         <div class="current-label"><span class="pulse" aria-hidden="true"></span>Current focus</div>
-        <div class="current-number">W01</div>
+        <div class="current-number">W02</div>
         <div class="current-copy">
-          <h2>最小 Agent Loop</h2>
-          <p>能解释并实现 request → function call → execute → function_call_output → final response。</p>
+          <h2>Model Profile 与 Packy 能力检查</h2>
+          <p>受控选择服务端 Model Profile，并知道“OpenAI-compatible”不等于 Responses-compatible。</p>
         </div>
-        <a class="primary-action" href="#week-01" data-current-link>Continue Week 01<span aria-hidden="true">↓</span></a>
+        <a class="primary-action" href="#week-02" data-current-link>Continue Week 02<span aria-hidden="true">↓</span></a>
       </div>
     </section>
 
@@ -55,14 +55,14 @@
       <header class="section-heading">
         <p>01 / Curriculum</p>
         <h2 id="curriculum-title">Twelve verified vertical slices.</h2>
-        <span>0 of 12 weeks verified</span>
+        <span>1 of 12 weeks verified</span>
       </header>
       <div class="week-list">
-    <details class="week-row" id="week-01" data-week="01" open>
+    <details class="week-row" data-week="01" >
       <summary>
         <span class="week-index">01</span>
         <span class="week-heading"><strong>最小 Agent Loop</strong><small>Sequential capability 01 of 12</small></span>
-        <span class="week-status week-status--current">Current</span>
+        <span class="week-status week-status--verified">Verified</span>
         <span class="disclosure" aria-hidden="true"></span>
       </summary>
       <div class="week-body">
@@ -75,11 +75,11 @@
         </dl>
       </div>
     </details>
-    <details class="week-row" data-week="02" >
+    <details class="week-row" id="week-02" data-week="02" open>
       <summary>
         <span class="week-index">02</span>
         <span class="week-heading"><strong>Model Profile 与 Packy 能力检查</strong><small>Sequential capability 02 of 12</small></span>
-        <span class="week-status week-status--upcoming">Upcoming</span>
+        <span class="week-status week-status--current">Current</span>
         <span class="disclosure" aria-hidden="true"></span>
       </summary>
       <div class="week-body">
@@ -271,10 +271,10 @@
         <span>Web Creation Agent Workbench</span>
       </div>
       <ol class="capability-track">
-  <li class="capability-item is-current">
+  <li class="capability-item ">
     <span>01</span><strong>最小 Agent Loop</strong>
   </li>
-  <li class="capability-item ">
+  <li class="capability-item is-current">
     <span>02</span><strong>Model Profile 与 Packy 能力检查</strong>
   </li>
   <li class="capability-item ">
@@ -313,7 +313,7 @@
       <header class="section-heading">
         <p>03 / Learning evidence</p>
         <h2 id="evidence-title">Claims require artifacts.</h2>
-        <span>1 Lessons · 0 verified weeks · 8 Records</span>
+        <span>1 Lessons · 1 verified weeks · 8 Records</span>
       </header>
       <div class="evidence-grid">
         <div>
@@ -324,7 +324,11 @@
       <span class="row-arrow" aria-hidden="true">↗</span>
     </a>
           <div class="subheading subheading--spaced"><span>Weekly evidence</span><small>Build · Test · Demo · Explain</small></div>
-          <div class="empty-row"><span>Evidence</span><p>No verified weekly evidence yet. Reading alone does not count.</p></div>
+          <a class="ledger-row" href="evidence/week-01.md">
+      <span class="ledger-index">E01</span>
+      <span><strong>Week 01 · 最小 Agent Loop</strong><small>Result · verified</small></span>
+      <span class="row-arrow" aria-hidden="true">↗</span>
+    </a>
         </div>
         <div>
           <div class="subheading"><span>Learning Records</span><small>Prior knowledge and confirmed decisions</small></div>
@@ -338,9 +342,9 @@
     <span><strong>尚未建立流式 Agent UI 闭环</strong><small>学习者尚未独立实现 SSE 或 fetch stream 的增量渲染、中断、事件解析、失败重试和状态恢复。后续教学应跳过通用 React 基础，优先用主作品建立并验证这条完整事件闭环。</small></span>
     <span class="row-arrow" aria-hidden="true">↗</span>
   </a>
-  <a class="ledger-row" href="learning-records/0003-agent-loop-gap.md">
+  <a class="ledger-row" href="learning-records/0003-minimal-agent-loop.md">
     <span class="ledger-index">R03</span>
-    <span><strong>尚未实现最小 Agent Loop</strong><small>学习者尚未亲手实现模型选择工具、程序执行工具、回填观察结果并产生最终回答的最小循环。后续教学应先用 TypeScript 建立可解释、可测试的 Agent runtime 因果链，再将其事件映射到 Agent UI。</small></span>
+    <span><strong>已实现最小 Agent Loop</strong><small>学习者已在 Web Creation Agent Workbench 中用 TypeScript 实现可解释、可测试的最小 Agent Loop：模型可以请求一个只读工具，应用负责校验参数、执行工具，并用相同的 call_id 回填 function_call_output。循环在模型返回最终回答时正常结束，在超过最大轮次时明确停止。 验证证据见 Week 01 · 最小 Agent Loop：类型检查通过，规定的四条测试路径全部通过，CLI Demo 展示了完整调用轨迹，闭卷讲解覆盖了状态所有权、结果回填和无限循环风险。</small></span>
     <span class="row-arrow" aria-hidden="true">↗</span>
   </a>
   <a class="ledger-row" href="learning-records/0004-llm-api-exposure.md">

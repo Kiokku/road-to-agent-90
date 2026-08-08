@@ -4,7 +4,7 @@
 
 | 周 | 纵切 | Build | Test | Demo | Explain | 状态 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 01 | 最小 Agent Loop |  |  |  |  | 未开始 |
+| 01 | 最小 Agent Loop | [完成](../projects/web-creation-agent-workbench/src/agent-loop.ts) | [4/4 通过](../evidence/week-01/test-output.txt) | [CLI 通过](../evidence/week-01/demo-output.txt) | [通过](../evidence/week-01/explain.md) | 已完成 |
 | 02 | Model Profile 与 Packy 能力检查 |  |  |  |  | 未开始 |
 | 03 | Node API、Session 与事件契约 |  |  |  |  | 未开始 |
 | 04 | SSE Streaming、取消与重试 |  |  |  |  | 未开始 |
